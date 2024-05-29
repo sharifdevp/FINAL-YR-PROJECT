@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Spana: Leave Management App
 
-## Getting Started
+### Usage
+- Users can submit leave requests
+- Admins & Moderators can view and edit submitted leaves
+- Approved leaves trigger automatic balances updates
+- Everyone can view the Organisational Calendar and see upcoming events
+- Admins can add settings and edit balances
 
-First, run the development server:
+### Author 
+- Prince De Mawo 
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+<img src="/spanaOG.png" alt="project-Img" />
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## <a href="https://youtu.be/F_d3TviPLOk?si=ACY13MBcpQEbg1wb"> Video Tutorial </a>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Tech-Stack
+The app was built using the following technologies:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Next.js as the React framework
+- Prisma as the ORM for migrations and database access
+- PostgreSQL: database for local testing
+- Next-Auth/Authjs: for authentication
+- TypeScript: the programming language
+- TailwindCSS: Styling
+- shadcn/ui for UI components
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### Clone the repo
+`https://github.com/de-mawo/spana-yt.git `
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Install packages
+`yarn `
 
-## Deploy on Vercel
+#### Setup the .env file
+- See the `.env.example ` file
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### Setup Prisma
+`yarn prisma generate`
+`yarn prisma migrate dev `
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+#### Start the app
+`yarn dev`
