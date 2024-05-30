@@ -59,7 +59,6 @@ const EditLeave = ({
 
   const formSchema = z.object({
     notes: z.string().max(500),
-
     status: z.enum(leaveStatus),
   });
 
@@ -94,10 +93,24 @@ const EditLeave = ({
         toast.success('Edit Successful', { duration: 4000 });
         setOpen(false);
         router.refresh();
+
+        // Send approval email
+        await fetch('/api/emails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: email,
+            subject: 'Leave Approval Notice',
+            status: values.status,
+            userEmail: user,
+            notes: values.notes,
+          }),
+        });
       } else {
         const errorMessage = await res.text();
-
-        toast.error(`An error occurred ${errorMessage}`, { duration: 6000 });
+        toast.error(`An error occurred: ${errorMessage}`, { duration: 6000 });
       }
     } catch (error) {
       console.error('An error occurred:', error);
