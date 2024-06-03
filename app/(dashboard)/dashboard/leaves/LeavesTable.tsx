@@ -93,6 +93,7 @@ const LeavesTable = ({ leaves }: leaveProps) => {
                   email={leave.userEmail}
                   user={leave.userName}
                   startDate={leave.startDate}
+                  phoneNumber={leave.phoneNumber}
                 />
               )}
             </TableCell>

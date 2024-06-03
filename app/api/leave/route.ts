@@ -55,18 +55,30 @@ export async function POST(req: NextRequest) {
       fileContent = Buffer.from(bytes);
     }
 
+    // Retrieve the user from the database to get their ID and phone number
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        email: user.email,
+      },
+    });
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
     const year = new Date().getFullYear().toString();
     await prisma.leave.create({
       data: {
         startDate,
         endDate,
-        userEmail: user.email,
+        userId: dbUser.id, // Use the user's ID here
         type: leave,
         userNote: notes,
-        fileContent, // Store the file content in the database
+        fileContent, //Store the file in the database
         userName: user.name,
         days: calcDays,
         year,
+        userEmail: user.email, // Include userEmail property
+        phoneNumber: dbUser.phone, // Use phone number from the database
       },
     });
 
