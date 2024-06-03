@@ -73,10 +73,6 @@ const EditLeave = ({
 
   async function editLeave(values: z.infer<typeof formSchema>) {
     try {
-      if (!phoneNumber) {
-        throw new Error('Phone number is required');
-      }
-
       const formValues = {
         ...values,
         notes: values.notes,
@@ -96,8 +92,6 @@ const EditLeave = ({
       });
 
       if (res.ok) {
-        toast.success('Edit Successful', { duration: 4000 });
-
         // Log the phoneNumber and message
         console.log('PhoneNumber:', phoneNumber);
         console.log('SMS Payload:', {
@@ -113,7 +107,7 @@ const EditLeave = ({
           },
           body: JSON.stringify({
             phoneNumber: phoneNumber,
-            message: `Leave Approval Notice\nStatus: ${values.status}\nNotes: ${values.notes}`,
+            message: `Leave Approval Notice\nStatus: ${values.status}\nComment notes: ${values.notes}`,
           }),
         });
         if (!smsResponse.ok) {
@@ -139,11 +133,15 @@ const EditLeave = ({
           throw new Error('Failed to send email');
         }
 
+        toast.success('Approval Decision made Successfully', {
+          duration: 8000,
+        });
+
         setOpen(false);
         router.refresh();
       } else {
         const errorMessage = await res.text();
-        toast.error(`An error occurred: ${errorMessage}`, { duration: 6000 });
+        toast.error(`An error occurred: ${errorMessage}`, { duration: 8000 });
       }
     } catch (error) {
       console.error('An error occurred:', error);

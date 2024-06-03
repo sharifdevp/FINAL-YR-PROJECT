@@ -12,9 +12,9 @@ export const POST = async (req: Request) => {
   try {
     const { phoneNumber, message } = await req.json();
 
-    if (!phoneNumber || !message) {
+    if (!phoneNumber) {
       return NextResponse.json(
-        { message: 'Phone number and message are required' },
+        { message: 'Phone number is required before approval' },
         { status: 400 }
       );
     }
