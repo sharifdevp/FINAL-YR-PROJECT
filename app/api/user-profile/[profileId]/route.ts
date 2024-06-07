@@ -1,29 +1,28 @@
 import { getCurrentUser } from '@/lib/sessions/RegularUserSession';
-import { Role } from '@prisma/client';
-
 import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 
-interface EditBody {
-  [key: string]: number | string;
+type EditProfileBody = {
+  phone: string;
   id: string;
-}
-const allowedRoles = ['ADMIN', 'MODERATOR'];
+  image: string; // Added image field
+};
 
 export async function PATCH(req: Request) {
   const loggedInUser = await getCurrentUser();
-  if (!allowedRoles.includes(loggedInUser?.role as Role)) {
+  if (loggedInUser?.role !== 'USER') {
     throw new Error('You are not permitted to perform this action');
   }
 
   try {
-    const body: EditBody = await req.json();
+    const body: EditProfileBody = await req.json();
+    const { phone, id, image } = body;
 
-    const { id, ...data } = body;
-
-    await prisma.balances.update({
+    await prisma.user.update({
       where: { id },
-      data,
+      data: { phone, image }, // Updating these fields in the db
     });
+
     return NextResponse.json({ message: 'Success' }, { status: 200 });
   } catch (error) {
     console.error(error);

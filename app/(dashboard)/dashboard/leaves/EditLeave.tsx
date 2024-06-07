@@ -43,7 +43,7 @@ type EditLeaveProps = {
   email: string;
   user: string;
   startDate: Date;
-  phoneNumber: string;
+  phoneNumber: string | null;
 };
 
 const EditLeave = ({
@@ -133,15 +133,15 @@ const EditLeave = ({
           throw new Error('Failed to send email');
         }
 
-        toast.success('Approval Decision made Successfully', {
-          duration: 8000,
+        toast.success('Approval Action taken Successfully', {
+          duration: 15000,
         });
 
         setOpen(false);
         router.refresh();
       } else {
         const errorMessage = await res.text();
-        toast.error(`An error occurred: ${errorMessage}`, { duration: 8000 });
+        toast.error(`An error occurred: ${errorMessage}`, { duration: 15000 });
       }
     } catch (error) {
       console.error('An error occurred:', error);

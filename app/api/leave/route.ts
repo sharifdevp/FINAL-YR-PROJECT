@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/session';
+import { getCurrentUser } from '@/lib/sessions/RegularUserSession';
 import { differenceInDays, parseISO } from 'date-fns';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma'; // Corrected import statement
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     if (existingLeave) {
       return NextResponse.json(
-        { error: 'Leave entry already exists' },
+        { styledError: 'Leave entry already exists' },
         { status: 400 }
       );
     }
@@ -62,7 +62,20 @@ export async function POST(req: NextRequest) {
       },
     });
     if (!dbUser) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json(
+        { styledError: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    if (!dbUser.phone) {
+      return NextResponse.json(
+        {
+          styledError:
+            'Please add a phone number to your profile before requesting leave',
+        },
+        { status: 400 },
+      );
     }
 
     const year = new Date().getFullYear().toString();
@@ -73,7 +86,7 @@ export async function POST(req: NextRequest) {
         userId: dbUser.id, // Use the user's ID here
         type: leave,
         userNote: notes,
-        fileContent, //Store the file in the database
+        fileContent, // Store the file in the database
         userName: user.name,
         days: calcDays,
         year,
@@ -86,7 +99,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { styledError: 'Internal server error' },
       { status: 500 }
     );
   }

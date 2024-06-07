@@ -39,9 +39,9 @@ import { useState } from 'react';
 
 // Define the User type
 type User = {
-  email: string;
-  image: string;
-  name: string;
+  email: string | null;
+  image: string | null;
+  name: string | null;
   role: string;
 };
 

@@ -1,6 +1,6 @@
-import React from 'react'
-import WelcomeBanner from './WelcomeBanner'
-import { getCurrentUser } from '@/lib/session';
+import React from 'react';
+import WelcomeBanner from './WelcomeBanner';
+import { getCurrentUser } from '@/lib/sessions/RegularUserSession';
 import { Balances, User } from '@prisma/client';
 import Calendar from './Calendar';
 import { getUserBalances } from '@/lib/data/getBalanceData';
@@ -14,28 +14,28 @@ const Portal = async () => {
   const Events = await getEventsData();
   return (
     <>
-    <WelcomeBanner user={user as User} />
-    <Calendar events={Events} />
-    <div>
+      <WelcomeBanner user={user as User} />
+      <Calendar events={Events} />
+      <div>
         <Container>
           {!CurrentYearBalances ? (
-            <div className="my-4">
-              <h2 className="text-xl text-center font-extrabold leading-tight  lg:text-2xl">
+            <div className='my-4'>
+              <h2 className='text-xl text-center font-extrabold leading-tight  lg:text-2xl'>
                 No Balances Data found...
               </h2>
             </div>
           ) : (
-            <div className=" my-4 ">
-              <h2 className="text-xl text-center font-extrabold leading-tight  lg:text-2xl">
+            <div className=' my-4 '>
+              <h2 className='text-xl text-center font-extrabold leading-tight  lg:text-2xl'>
                 Current Year Balances
               </h2>
             </div>
           )}
         </Container>
-        <UserBalances balances={CurrentYearBalances as  Balances} />
+        <UserBalances balances={CurrentYearBalances as Balances} />
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Portal
+export default Portal;

@@ -1,5 +1,5 @@
-import { getCurrentUser } from "@/lib/session";
-import { NextRequest, NextResponse } from "next/server";
+import { getCurrentUser } from '@/lib/sessions/RegularUserSession';
+import { NextRequest, NextResponse } from 'next/server';
 
 type SubmittedEvent = {
   title: string;
@@ -9,8 +9,8 @@ type SubmittedEvent = {
 
 export async function POST(req: NextRequest) {
   const loggedInUser = await getCurrentUser();
-  if (loggedInUser?.role !== "ADMIN") {
-    throw new Error("You are not permitted to perfom this action");
+  if (loggedInUser?.role !== 'ADMIN') {
+    throw new Error('You are not permitted to perfom this action');
   }
 
   try {
@@ -25,11 +25,11 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ message: "Success" }, { status: 200 });
+    return NextResponse.json({ message: 'Success' }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
