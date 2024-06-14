@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/sessions/RegularUserSession';
+import { getCurrentUser } from '@/lib/sessions/userSession';
 import { differenceInDays, parseISO } from 'date-fns';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma'; // Corrected import statement
@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
           styledError:
             'Please add a phone number to your profile before requesting leave',
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 

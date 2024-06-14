@@ -1,4 +1,3 @@
-// This is our Prisma schema file,
 generator client {
   provider = "prisma-client-js"
 }
@@ -57,13 +56,18 @@ model User {
   image         String?
   role          Role       @default(USER)
   phone         String?
-  title         String?
+  title         OrgnTitle?  @relation(fields: [titleId], references: [id], onDelete: Cascade)
+  titleId       String? 
+  titleName     String?
   manager       String?
-  department    String?
   accounts      Account[]
   sessions      Session[]
   balances      Balances[]
-  // leaves         Leave[]  // Ive added this
+  leaves        Leave[]
+  // departments   Department[] 
+  departmentName String?
+  departmentId  String?
+  department    Department?  @relation(fields: [departmentId], references: [id], onDelete: Cascade)
 }
 
 model LeaveType {
@@ -84,12 +88,12 @@ enum LeaveStatus {
 model Leave {
   id            String      @id @default(cuid())
   type          String
-  year String @default("")
+  year          String @default("")
   startDate     DateTime
   endDate       DateTime
   days          Int
   userName      String 
-  phoneNumber   String?    // Ive added phoneNumber field here
+  phoneNumber   String?    
   userNote      String?
   tasksLink     String?
   userEmail     String
@@ -98,8 +102,9 @@ model Leave {
   moderatorNote String?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @default(now())
-  fileContent   Bytes? // This stores the binary data of the file
-    userId      String     // Ive added userId field
+  fileContent   Bytes? 
+  userId        String     
+  user          User       @relation(fields: [userId], references: [id])
 }
 
 model Balances {
@@ -108,21 +113,21 @@ model Balances {
   annualCredit       Int?   @default(0)
   annualUsed         Int?   @default(0)
   annualAvailable    Int?   @default(0)
-  healthCredit       Int?   @default(0)
-  healthUsed         Int?   @default(0)
-  healthAvailable    Int?   @default(0)
-  studyCredit        Int?   @default(0)
-  studyUsed          Int?   @default(0)
-  studyAvailable     Int?   @default(0)
+  sickCredit         Int?   @default(0)
+  sickUsed           Int?   @default(0)
+  sickAvailable      Int?   @default(0)
   maternityCredit    Int?   @default(0)
   maternityUsed      Int?   @default(0)
   maternityAvailable Int?   @default(0)
-  familyCredit       Int?   @default(0)
-  familyUsed         Int?   @default(0)
-  familyAvailable    Int?   @default(0)
   paternityCredit    Int?   @default(0)
   paternityUsed      Int?   @default(0)
   paternityAvailable Int?   @default(0)
+  emergencyCredit    Int?   @default(0)
+  emergencyUsed      Int?   @default(0)
+  emergencyAvailable Int?   @default(0)
+  compensationCredit Int?   @default(0)
+  compensationUsed   Int?   @default(0)
+  compensationAvailable Int? @default(0)
   unpaidUsed         Int?   @default(0)
   name               String
   email              String
@@ -137,6 +142,32 @@ model Events {
   endDate     DateTime?
 }
 
+model Department {
+  id          String   @id @default(cuid())
+  label       String
+  desc        String
+  // user        User?  @relation(fields: [userId ], references: [id], onDelete: Cascade)
+  userId      User[]
+}
+
+model OrgnTitle {
+  id          String    @id @default(cuid())
+  titlename   String
+  description String
+  user        User[]
+}
+
+
+
+// // This is our Prisma schema file,
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "mysql"
+//   url      = env("DATABASE_URL")
+// }
 
 // model Account {
 //   id                String  @id @default(cuid())
@@ -156,76 +187,13 @@ model Events {
 
 //   @@unique([provider, providerAccountId])
 // }
+
 // model Session {
 //   id           String   @id @default(cuid())
 //   sessionToken String   @unique
 //   userId       String
 //   expires      DateTime
 //   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-// }
-
-// model balances {
-//   id                 String @id
-//   year               String
-//   annualCredit       Int?   @default(0)
-//   annualUsed         Int?   @default(0)
-//   annualAvailable    Int?   @default(0)
-//   healthCredit       Int?   @default(0)
-//   healthUsed         Int?   @default(0)
-//   healthAvailable    Int?   @default(0)
-//   studyCredit        Int?   @default(0)
-//   studyUsed          Int?   @default(0)
-//   studyAvailable     Int?   @default(0)
-//   maternityCredit    Int?   @default(0)
-//   maternityUsed      Int?   @default(0)
-//   maternityAvailable Int?   @default(0)
-//   familyCredit       Int?   @default(0)
-//   familyUsed         Int?   @default(0)
-//   familyAvailable    Int?   @default(0)
-//   paternityCredit    Int?   @default(0)
-//   paternityUsed      Int?   @default(0)
-//   paternityAvailable Int?   @default(0)
-//   unpaidUsed         Int?   @default(0)
-//   name               String
-//   email              String
-//   user               User   @relation(fields: [email], references: [email], onDelete: Cascade, map: "Balances_email_fkey")
-
-//   @@index([email], map: "Balances_email_fkey")
-// }
-
-// model events {
-//   id          String    @id
-//   title       String
-//   description String?
-//   startDate   DateTime
-//   endDate     DateTime?
-// }
-
-// model leave {
-//  id         Int      @id @default(autoincrement())
-//   type          String
-//   year          String       @default("")
-//   startDate     DateTime
-//   endDate       DateTime
-//   days          Int
-//   userName      String
-//   userNote      String?
-//   tasksLink     String?
-//   userEmail     String
-//   status        leave_status @default(PENDING)
-//   moderator     String?
-//   moderatorNote String?
-//   createdAt     DateTime     @default(now())
-//   updatedAt     DateTime     @default(now())
-//   fileContent   Bytes?
-// }
-
-// model leavetype {
-//   id          String  @id
-//   title       String
-//   values      String  @default("Credit,Used,Available")
-//   category    String
-//   description String?
 // }
 
 // model VerificationToken {
@@ -256,15 +224,14 @@ model Events {
 //   accounts      Account[]
 //   sessions      Session[]
 //   balances      Balances[]
+//   // leaves         Leave[]  // Ive added this
 // }
-
-
 
 // model LeaveType {
 //   id          String   @id @default(cuid())
 //   title       String
-//   values      String[] @default(["Credit", "Used", "Available"])
-//   category    String // Should be a lower case of the title
+//   values      String   @default("[\"Credit\", \"Used\", \"Available\"]")
+//   category    String   // Should be a lower case of the title
 //   description String?
 // }
 
@@ -274,14 +241,16 @@ model Events {
 //   INMODERATION
 //   REJECTED
 // }
+
 // model Leave {
 //   id            String      @id @default(cuid())
 //   type          String
-//   year          String @default("")
+//   year String @default("")
 //   startDate     DateTime
 //   endDate       DateTime
 //   days          Int
-//   userName      String
+//   userName      String 
+//   phoneNumber   String?    // Ive added phoneNumber field here
 //   userNote      String?
 //   tasksLink     String?
 //   userEmail     String
@@ -290,7 +259,8 @@ model Events {
 //   moderatorNote String?
 //   createdAt     DateTime    @default(now())
 //   updatedAt     DateTime    @default(now())
-//   fileContent   Bytes?
+//   fileContent   Bytes? // This stores the binary data of the file
+//     userId      String     // Ive added userId field
 // }
 
 // model Balances {
@@ -299,21 +269,21 @@ model Events {
 //   annualCredit       Int?   @default(0)
 //   annualUsed         Int?   @default(0)
 //   annualAvailable    Int?   @default(0)
-//   healthCredit       Int?   @default(0)
-//   healthUsed         Int?   @default(0)
-//   healthAvailable    Int?   @default(0)
-//   studyCredit        Int?   @default(0)
-//   studyUsed          Int?   @default(0)
-//   studyAvailable     Int?   @default(0)
+//   sickCredit         Int?   @default(0)
+//   sickUsed           Int?   @default(0)
+//   sickAvailable      Int?   @default(0)
 //   maternityCredit    Int?   @default(0)
 //   maternityUsed      Int?   @default(0)
 //   maternityAvailable Int?   @default(0)
-//   familyCredit       Int?   @default(0)
-//   familyUsed         Int?   @default(0)
-//   familyAvailable    Int?   @default(0)
 //   paternityCredit    Int?   @default(0)
 //   paternityUsed      Int?   @default(0)
 //   paternityAvailable Int?   @default(0)
+//   emergencyCredit    Int?   @default(0)
+//   emergencyUsed      Int?   @default(0)
+//   emergencyAvailable  Int?   @default(0)
+//   compensationCredit    Int?   @default(0)
+//   compensationUsed      Int?   @default(0)
+//   compensationAvailable  Int?   @default(0)
 //   unpaidUsed         Int?   @default(0)
 //   name               String
 //   email              String
@@ -327,4 +297,5 @@ model Events {
 //   startDate   DateTime
 //   endDate     DateTime?
 // }
+
 

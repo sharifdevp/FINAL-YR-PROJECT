@@ -1,14 +1,14 @@
-import { getCurrentUser } from '@/lib/sessions/RegularUserSession';
+import { getCurrentUser } from '@/lib/sessions/userSession';
 import { Role } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
 type SubmittedCredits = {
   annual: number;
-  family: number;
-  health: number;
-  study: number;
+  sick: number;
   maternity: number;
   paternity: number;
+  emergency: number;
+  compensation: number;
   unpaid: number;
   email: string;
   year: string;
@@ -27,11 +27,11 @@ export async function POST(req: NextRequest) {
 
     const {
       annual,
-      family,
-      health,
-      study,
+      sick,
       maternity,
       paternity,
+      emergency,
+      compensation,
       year,
       email,
       name,
@@ -57,11 +57,11 @@ export async function POST(req: NextRequest) {
         email,
         year,
         annualCredit: annual,
-        familyCredit: family,
-        healthCredit: health,
-        studyCredit: study,
+        sickCredit: sick,
         maternityCredit: maternity,
         paternityCredit: paternity,
+        emergencyCredit: emergency,
+        compensationCredit: compensation,
       },
     });
 

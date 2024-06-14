@@ -1,9 +1,135 @@
 'use client';
 
+// import { useForm } from 'react-hook-form';
+// import * as z from 'zod';
+// import { zodResolver } from '@hookform/resolvers/zod';
+// import DialogWrapper from '@/components/Common/DialogWrapper';
+// import { UserRoles } from '@/lib/dummy-data';
+// import toast from 'react-hot-toast';
+// import { IoPencil } from 'react-icons/io5';
+// import {
+//   Form,
+//   FormControl,
+//   FormField,
+//   FormItem,
+//   FormLabel,
+//   FormMessage,
+// } from '@/components/ui/form';
+// import {
+//   Command,
+//   CommandEmpty,
+//   CommandGroup,
+//   CommandInput,
+//   CommandItem,
+// } from '@/components/ui/command';
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverTrigger,
+// } from '@/components/ui/popover';
+// import { Button } from '@/components/ui/button';
+// import { Input } from '@/components/ui/input';
+// import { PiCaretUpDownBold } from 'react-icons/pi';
+// import { cn } from '@/lib/utils';
+// import { BsCheckLg } from 'react-icons/bs';
+// import { User } from '@prisma/client';
+// import { useState, useEffect } from 'react';
+// import { useRouter } from 'next/navigation';
+
+// type EditUserProps = {
+//   user: User;
+// };
+
+// const EditUser = ({ user }: EditUserProps) => {
+//   const [open, setOpen] = useState(false);
+//   const [departments, setDepartments] = useState<
+//     { id: string; label: string }[]
+//   >([]);
+//   const [titles, setTitles] = useState<{ id: string; titlename: string }[]>([]);
+//   const router = useRouter();
+
+//   const formSchema = z.object({
+//     id: z.string(), // Ensure id is included in form schema
+//     phone: z.string().max(50),
+//     departmentId: z.string(),
+//     titleId: z.string(),
+//     role: z.enum(UserRoles),
+//   });
+
+//   const form = useForm<z.infer<typeof formSchema>>({
+//     resolver: zodResolver(formSchema),
+//     defaultValues: {
+//       id: user.id, // Populate id from props
+//       phone: user.phone as string,
+//       departmentId: user.departmentId as string,
+//       titleId: user.titleId as string,
+//       role: user.role,
+//     },
+//   });
+
+//   useEffect(() => {
+//     // Fetch departments from the API
+//     const fetchDepartments = async () => {
+//       try {
+//         const res = await fetch('/api/department');
+//         if (!res.ok) {
+//           throw new Error('Failed to fetch departments');
+//         }
+//         const data = await res.json();
+//         setDepartments(data);
+//       } catch (error) {
+//         console.error('Error fetching departments:', error);
+//         toast.error('Error fetching departments');
+//       }
+//     };
+
+//     // Fetch titles from the API
+//     const fetchTitles = async () => {
+//       try {
+//         const res = await fetch('/api/orgn-title');
+//         if (!res.ok) {
+//           throw new Error('Failed to fetch titles');
+//         }
+//         const data = await res.json();
+//         setTitles(data);
+//       } catch (error) {
+//         console.error('Error fetching titles:', error);
+//         toast.error('Error fetching titles');
+//       }
+//     };
+
+//     fetchDepartments();
+//     fetchTitles();
+//   }, []);
+
+//   async function SubmitEditUser(values: z.infer<typeof formSchema>) {
+//     const id = user.id;
+//     try {
+//       const res = await fetch(`/api/user/${id}`, {
+//         method: 'PATCH',
+//         body: JSON.stringify(values),
+//       });
+
+//       if (res.ok) {
+//         toast.success('User Edited Successfully', { duration: 4000 });
+//         setOpen(false);
+//         router.refresh();
+//       } else {
+//         const errorMessage = await res.text();
+//         toast.error(`An error occurred ${errorMessage}`, { duration: 6000 });
+//       }
+//     } catch (error) {
+//       console.error('An error occurred:', error);
+//       toast.error('An Unexpected error occurred');
+//     }
+//   }
+
+"use client"
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import DialogWrapper from '@/components/Common/DialogWrapper';
+import { UserRoles } from '@/lib/dummy-data'; // Assuming UserRoles is an object
 import toast from 'react-hot-toast';
 import { IoPencil } from 'react-icons/io5';
 import {
@@ -29,63 +155,103 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PiCaretUpDownBold } from 'react-icons/pi';
-import { cn } from '@/lib/utils';
-import { UserRoles, orgDepartments, orgTitles } from '@/lib/dummy-data';
 import { BsCheckLg } from 'react-icons/bs';
-import { User } from '@prisma/client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { User } from '@prisma/client';
 
 type EditUserProps = {
   user: User;
+  onUpdate: (updatedUser: User) => void; // Callback function to update user in UsersTable
 };
 
-const EditUser = ({ user }: EditUserProps) => {
+const EditUser = ({ user, onUpdate }: EditUserProps) => {
   const [open, setOpen] = useState(false);
+  const [departments, setDepartments] = useState<
+    { id: string; label: string }[]
+  >([]);
+  const [titles, setTitles] = useState<{ id: string; titlename: string }[]>([]);
   const router = useRouter();
 
   const formSchema = z.object({
+    id: z.string(),
     phone: z.string().max(50),
-
-    department: z.string(),
-
-    title: z.string(),
-
-    role: z.enum(UserRoles),
+    departmentId: z.string(),
+    titleId: z.string(),
+    role: z.string(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      id: user.id,
       phone: user.phone as string,
-      department: user.department as string,
-      title: user.title as string,
+      departmentId: user.departmentId as string,
+      titleId: user.titleId as string,
       role: user.role,
     },
   });
 
-  async function SubmitEditUser(values: z.infer<typeof formSchema>) {
-    const id = user.id;
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const res = await fetch('/api/department');
+        if (!res.ok) {
+          throw new Error('Failed to fetch departments');
+        }
+        const data = await res.json();
+        setDepartments(data);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+        toast.error('Error fetching departments');
+      }
+    };
+
+    const fetchTitles = async () => {
+      try {
+        const res = await fetch('/api/orgn-title');
+        if (!res.ok) {
+          throw new Error('Failed to fetch titles');
+        }
+        const data = await res.json();
+        setTitles(data);
+      } catch (error) {
+        console.error('Error fetching titles:', error);
+        toast.error('Error fetching titles');
+      }
+    };
+
+    fetchDepartments();
+    fetchTitles();
+  }, []);
+
+  async function submitEditUser(values: z.infer<typeof formSchema>) {
     try {
-      const res = await fetch('/api/user/userId', {
+      const res = await fetch(`/api/user/${values.id}`, {
         method: 'PATCH',
-        body: JSON.stringify({ ...values, id }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
       });
 
       if (res.ok) {
-        toast.success('User Edited Successfully', { duration: 4000 });
+        const data = await res.json();
+        toast.success('User Edited Successfully', { duration: 8000 });
+        onUpdate(data.user); // Call the callback with updated user data
         setOpen(false);
         router.refresh();
       } else {
         const errorMessage = await res.text();
-
-        toast.error(`An error occured ${errorMessage}`, { duration: 6000 });
+        toast.error(`An error occurred ${errorMessage}`, { duration: 6000 });
       }
     } catch (error) {
       console.error('An error occurred:', error);
-      toast.error('An Unexpected error occured');
+      toast.error('An Unexpected error occurred');
     }
   }
+
+  const roleKeys = Object.keys(UserRoles) as Array<keyof typeof UserRoles>;
 
   return (
     <DialogWrapper
@@ -97,7 +263,7 @@ const EditUser = ({ user }: EditUserProps) => {
     >
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(SubmitEditUser)}
+          onSubmit={form.handleSubmit(submitEditUser)}
           className='space-y-8'
         >
           <FormField
@@ -116,7 +282,7 @@ const EditUser = ({ user }: EditUserProps) => {
 
           <FormField
             control={form.control}
-            name='department'
+            name='departmentId'
             render={({ field }) => (
               <FormItem className='flex flex-col'>
                 <FormLabel>Department</FormLabel>
@@ -126,15 +292,13 @@ const EditUser = ({ user }: EditUserProps) => {
                       <Button
                         variant='outline'
                         role='combobox'
-                        className={cn(
-                          ' justify-between',
+                        className={`justify-between ${
                           !field.value && 'text-muted-foreground'
-                        )}
+                        }`}
                       >
                         {field.value
-                          ? orgDepartments.find(
-                              (dpt) => dpt.label === field.value
-                            )?.label
+                          ? departments.find((dpt) => dpt.id === field.value)
+                              ?.label
                           : 'Select a department'}
                         <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                       </Button>
@@ -145,21 +309,20 @@ const EditUser = ({ user }: EditUserProps) => {
                       <CommandInput placeholder='Search a department...' />
                       <CommandEmpty>No department found.</CommandEmpty>
                       <CommandGroup>
-                        {orgDepartments.map((dpt) => (
+                        {departments.map((dpt) => (
                           <CommandItem
-                            value={dpt.label}
+                            value={dpt.id}
                             key={dpt.id}
                             onSelect={() => {
-                              form.setValue('department', dpt.label);
+                              form.setValue('departmentId', dpt.id);
                             }}
                           >
                             <BsCheckLg
-                              className={cn(
-                                'mr-2 h-4 w-4',
-                                dpt.label === field.value
+                              className={`mr-2 h-4 w-4 ${
+                                dpt.id === field.value
                                   ? 'opacity-100'
                                   : 'opacity-0'
-                              )}
+                              }`}
                             />
                             {dpt.label}
                           </CommandItem>
@@ -171,9 +334,10 @@ const EditUser = ({ user }: EditUserProps) => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
-            name='title'
+            name='titleId'
             render={({ field }) => (
               <FormItem className='flex flex-col'>
                 <FormLabel>Title</FormLabel>
@@ -183,15 +347,13 @@ const EditUser = ({ user }: EditUserProps) => {
                       <Button
                         variant='outline'
                         role='combobox'
-                        className={cn(
-                          ' justify-between',
+                        className={`justify-between ${
                           !field.value && 'text-muted-foreground'
-                        )}
+                        }`}
                       >
                         {field.value
-                          ? orgTitles.find(
-                              (title) => title.label === field.value
-                            )?.label
+                          ? titles.find((title) => title.id === field.value)
+                              ?.titlename
                           : 'Select a title'}
                         <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                       </Button>
@@ -202,23 +364,22 @@ const EditUser = ({ user }: EditUserProps) => {
                       <CommandInput placeholder='Search a title...' />
                       <CommandEmpty>No title found.</CommandEmpty>
                       <CommandGroup>
-                        {orgTitles.map((title) => (
+                        {titles.map((title) => (
                           <CommandItem
-                            value={title.label}
+                            value={title.id}
                             key={title.id}
                             onSelect={() => {
-                              form.setValue('title', title.label);
+                              form.setValue('titleId', title.id);
                             }}
                           >
                             <BsCheckLg
-                              className={cn(
-                                'mr-2 h-4 w-4',
-                                title.label === field.value
+                              className={`mr-2 h-4 w-4 ${
+                                title.id === field.value
                                   ? 'opacity-100'
                                   : 'opacity-0'
-                              )}
+                              }`}
                             />
-                            {title.label}
+                            {title.titlename}
                           </CommandItem>
                         ))}
                       </CommandGroup>
@@ -241,14 +402,11 @@ const EditUser = ({ user }: EditUserProps) => {
                       <Button
                         variant='outline'
                         role='combobox'
-                        className={cn(
-                          ' justify-between',
+                        className={`justify-between ${
                           !field.value && 'text-muted-foreground'
-                        )}
+                        }`}
                       >
-                        {field.value
-                          ? UserRoles.find((role) => role === field.value)
-                          : 'Select a role'}
+                        {field.value || 'Select a role'}
                         <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                       </Button>
                     </FormControl>
@@ -258,35 +416,33 @@ const EditUser = ({ user }: EditUserProps) => {
                       <CommandInput placeholder='Search a role...' />
                       <CommandEmpty>No role found.</CommandEmpty>
                       <CommandGroup>
-                        {UserRoles.map((role, i) => (
+                        {roleKeys.map((role) => (
                           <CommandItem
-                            value={role}
-                            key={i}
+                            value={role as string}
+                            key={role as string}
                             onSelect={() => {
-                              form.setValue('role', role);
+                              form.setValue('role', role as string);
                             }}
                           >
                             <BsCheckLg
-                              className={cn(
-                                'mr-2 h-4 w-4',
+                              className={`mr-2 h-4 w-4 ${
                                 role === field.value
                                   ? 'opacity-100'
                                   : 'opacity-0'
-                              )}
+                              }`}
                             />
-                            {role}
+                            {role as string}
                           </CommandItem>
                         ))}
                       </CommandGroup>
                     </Command>
                   </PopoverContent>
                 </Popover>
-                <FormMessage />
               </FormItem>
             )}
           />
 
-          <Button type='submit'>Submit</Button>
+          <Button type='submit'>Save Changes</Button>
         </form>
       </Form>
     </DialogWrapper>

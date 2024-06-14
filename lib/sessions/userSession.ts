@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth';
-import { Role, User } from '@prisma/client';
-import prisma from '@/lib/prisma'; // Adjust this import to your actual prisma instance path
+import { Role } from '@prisma/client';
+import prisma from '@/lib/prisma';
 
 export async function getCurrentUser(): Promise<{
   id: string;
@@ -11,9 +11,9 @@ export async function getCurrentUser(): Promise<{
   image: string | null;
   role: Role;
   phone: string | null;
-  title: string | null;
+  titlename: string | null;
   manager: string | null;
-  department: string | null;
+  label: string | null;
 } | null> {
   const session = await getServerSession(authOptions);
 
@@ -24,6 +24,10 @@ export async function getCurrentUser(): Promise<{
   // Retrieve the full user details from the database
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
+    include: {
+      department: true, // Include department if relation is set up
+      title: true, // Include title relation
+    },
   });
 
   if (!user) {
@@ -38,8 +42,8 @@ export async function getCurrentUser(): Promise<{
     image: user.image,
     role: user.role,
     phone: user.phone,
-    title: user.title,
+    titlename: user.title?.titlename || null, // Access title name through the relation
     manager: user.manager,
-    department: user.department,
+    label: user.department?.label || null,
   };
 }

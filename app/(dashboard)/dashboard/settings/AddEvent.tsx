@@ -65,7 +65,7 @@ const AddEvent = () => {
         startDate: values.startDate.toISOString(),
       };
 
-      const res = await fetch("/api/event", {
+      const res = await fetch("/api/event/{$Id}", {
         method: "POST",
         body: JSON.stringify(formattedValues),
       });

@@ -8,22 +8,23 @@ import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-const creditTypes = [ 
-  "annual",
-  "family",
-  "health",
-  "study",
-  "maternity",
-  "paternity",
+const creditTypes = [
+  'annual',
+  'health/sick',
+  'maternity',
+  'paternity',
+  'emergency',
+  'compensation',
+  'unpaid',
 ] as const;
 
 const initialCreditValues: { [key: string]: number } = {
   annual: 0,
-  family: 0,
   health: 0,
-  study: 0,
   maternity: 0,
   paternity: 0,
+  emergency: 0,
+  compensation: 0,
 };
 
 type Props = {

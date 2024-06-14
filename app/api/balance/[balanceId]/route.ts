@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/sessions/RegularUserSession';
+import { getCurrentUser } from '@/lib/sessions/userSession';
 import { Role } from '@prisma/client';
 
 import { NextResponse } from 'next/server';

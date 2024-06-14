@@ -26,13 +26,13 @@ const LeavesTable = ({ leaves }: leaveProps) => {
           <TableHead>Year</TableHead>
           <TableHead>Requested On</TableHead>
           <TableHead>Period</TableHead>
-          <TableHead>No. Of Days</TableHead>
+          <TableHead>No.Of Days</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Requester Note</TableHead>
           <TableHead>Attached File</TableHead>
           <TableHead>Action</TableHead>
-          <TableHead>Approved At</TableHead>
-          <TableHead>Approver Note</TableHead>
+          <TableHead>Updated At</TableHead>
+          <TableHead>Update comment/Note</TableHead>
           <TableHead className='text-right'>Approved By</TableHead>
         </TableRow>
       </TableHeader>

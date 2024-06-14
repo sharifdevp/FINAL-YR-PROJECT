@@ -1,6 +1,6 @@
 import React from 'react';
 import WelcomeBanner from './WelcomeBanner';
-import { getCurrentUser } from '@/lib/sessions/RegularUserSession';
+import { getCurrentUser } from '@/lib/sessions/userSession';
 import { Balances, User } from '@prisma/client';
 import Calendar from './Calendar';
 import { getUserBalances } from '@/lib/data/getBalanceData';

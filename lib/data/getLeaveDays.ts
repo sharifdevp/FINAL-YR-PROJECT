@@ -1,4 +1,4 @@
-import { getCurrentUser } from '../sessions/RegularUserSession';
+import { getCurrentUser } from '../sessions/userSession';
 
 export async function getAllLeaveDays() {
   const loggedInUser = await getCurrentUser();
