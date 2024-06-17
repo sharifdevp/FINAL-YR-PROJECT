@@ -1,26 +1,45 @@
 export const leaveTypes = [
-  { label: 'Annual', value: 'ANNUAL', description: 'This is a leave type' },
-  { label: 'Health/Sick', value: 'SICK', description: 'This is a leave type' },
   {
-    label: 'Emergency',
-    value: 'EMERGENCY',
+    id: 'ltyp-1',
+    label: 'Annual',
+    value: 'ANNUAL',
     description: 'This is a leave type',
   },
-  { label: 'Family', value: 'FAMILY', description: 'This is a leave type' },
   {
+    id: 'ltyp-2',
+    label: 'Sick',
+    value: 'SICK',
+    description: 'This is a leave type',
+  },
+
+  {
+    id: 'ltyp-3',
     label: 'Maternity',
     value: 'MATERNITY',
     description: 'This is a leave type',
   },
   {
+    id: 'ltyp-4',
     label: 'Paternity',
     value: 'PATERNITY',
     description: 'This is a leave type',
   },
-  { label: 'Unpaid', value: 'UNPAID', description: 'This is a leave type' },
   {
+    id: 'ltyp-5',
+    label: 'Emergency',
+    value: 'EMERGENCY',
+    description: 'This is a leave type',
+  },
+  {
+    id: 'ltyp-6',
     label: 'Compensation',
     value: 'COMPENSATION',
+    description: 'This is a leave type',
+  },
+  {
+    id: 'ltyp-7',
+    label: 'Unpaid',
+    value: 'UNPAID',
     description: 'This is a leave type',
   },
 ] as const;
@@ -99,7 +118,6 @@ export const leaveStatus = [
   //  "INMODERATION",
   'REJECTED',
 ] as const;
-
 
 // export const userLeaveBalances = [
 //     {

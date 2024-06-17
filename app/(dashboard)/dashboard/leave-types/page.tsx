@@ -18,7 +18,7 @@ const LeaveTypes = async () => {
           {/* <AddLeaveType /> */}
           <div className='col-span-2'>
             {/* <LeaveTypesTable leaveTypes={LeaveType} /> */}
-            <LeaveTypesTable />
+            <LeaveTypesTable leaveTypes={[]} />
           </div>
         </div>
       </div>

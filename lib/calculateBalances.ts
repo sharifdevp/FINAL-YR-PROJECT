@@ -27,14 +27,7 @@ export default async function calculateAndUpdateBalances(
           (balance.annualCredit as number) -
           ((balance.annualUsed as number) + days),
       };
-      break;
-    case 'COMPENSATION':
-      balanceUpdate = {
-        compensationUsed: (balance.compensationUsed as number) + days,
-        compensationAvailable:
-          (balance.compensationCredit as number) -
-          ((balance.compensationUsed as number) + days),
-      };
+
       break;
     case 'SICK':
       balanceUpdate = {
@@ -60,12 +53,20 @@ export default async function calculateAndUpdateBalances(
           ((balance.paternityUsed as number) + days),
       };
       break;
-    case 'STUDY':
+    case 'COMPENSATION':
       balanceUpdate = {
-        studyUsed: (balance.studyUsed as number) + days,
-        studyAvailable:
-          (balance.studyCredit as number) -
-          ((balance.studyUsed as number) + days),
+        compensationUsed: (balance.compensationUsed as number) + days,
+        compensationAvailable:
+          (balance.compensationCredit as number) -
+          ((balance.compensationUsed as number) + days),
+      };
+      break;
+    case 'EMERGENCY':
+      balanceUpdate = {
+        emergencyUsed: (balance.emergencyUsed as number) + days,
+        emergencyAvailable:
+          (balance.emergencyCredit as number) -
+          ((balance.emergencyUsed as number) + days),
       };
       break;
     case 'UNPAID':
