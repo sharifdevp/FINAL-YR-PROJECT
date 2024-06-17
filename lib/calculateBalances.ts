@@ -1,4 +1,4 @@
-import { Balances } from "@prisma/client";
+import { Balances } from '@prisma/client';
 
 export default async function calculateAndUpdateBalances(
   email: string,
@@ -14,13 +14,13 @@ export default async function calculateAndUpdateBalances(
   });
 
   if (!balance) {
-    throw new Error("Balance not found for the specified user and year");
+    throw new Error('Balance not found for the specified user and year');
   }
 
   let balanceUpdate: Partial<Balances> = {};
 
   switch (type) {
-    case "ANNUAL":
+    case 'ANNUAL':
       balanceUpdate = {
         annualUsed: (balance.annualUsed as number) + days,
         annualAvailable:
@@ -28,23 +28,23 @@ export default async function calculateAndUpdateBalances(
           ((balance.annualUsed as number) + days),
       };
       break;
-    case "FAMILY":
+    case 'COMPENSATION':
       balanceUpdate = {
-        familyUsed: (balance.familyUsed as number) + days,
-        familyAvailable:
-          (balance.familyCredit as number) -
-          ((balance.familyUsed as number) + days),
+        compensationUsed: (balance.compensationUsed as number) + days,
+        compensationAvailable:
+          (balance.compensationCredit as number) -
+          ((balance.compensationUsed as number) + days),
       };
       break;
-    case "HEALTH":
+    case 'SICK':
       balanceUpdate = {
-        healthUsed: (balance.healthUsed as number) + days,
-        healthAvailable:
-          (balance.healthCredit as number) -
-          ((balance.healthUsed as number) + days),
+        sickUsed: (balance.sickUsed as number) + days,
+        sickAvailable:
+          (balance.sickCredit as number) -
+          ((balance.sickUsed as number) + days),
       };
       break;
-    case "MATERNITY":
+    case 'MATERNITY':
       balanceUpdate = {
         maternityUsed: (balance.maternityUsed as number) + days,
         maternityAvailable:
@@ -52,7 +52,7 @@ export default async function calculateAndUpdateBalances(
           ((balance.maternityUsed as number) + days),
       };
       break;
-    case "PATERNITY":
+    case 'PATERNITY':
       balanceUpdate = {
         paternityUsed: (balance.paternityUsed as number) + days,
         paternityAvailable:
@@ -60,7 +60,7 @@ export default async function calculateAndUpdateBalances(
           ((balance.paternityUsed as number) + days),
       };
       break;
-    case "STUDY":
+    case 'STUDY':
       balanceUpdate = {
         studyUsed: (balance.studyUsed as number) + days,
         studyAvailable:
@@ -68,7 +68,7 @@ export default async function calculateAndUpdateBalances(
           ((balance.studyUsed as number) + days),
       };
       break;
-    case "UNPAID":
+    case 'UNPAID':
       balanceUpdate = {
         unpaidUsed: (balance.unpaidUsed as number) + days,
       };

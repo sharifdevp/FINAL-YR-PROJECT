@@ -1,7 +1,7 @@
 import Container from '@/components/Common/Container';
 import AddLeaveType from './AddLeaveType';
 import LeaveTypesTable from './leaveTypesTable';
-// import { getLeaveTypesData } from '@/lib/data/getLeaveTypesData';
+
 
 const LeaveTypes = async () => {
   // const LeaveType = await getLeaveTypesData();
@@ -15,7 +15,7 @@ const LeaveTypes = async () => {
           </h2>
         </div>
         <div className='grid grid-cols-1 lg:grid-cols-3 gap-2'>
-          <AddLeaveType />
+          {/* <AddLeaveType /> */}
           <div className='col-span-2'>
             {/* <LeaveTypesTable leaveTypes={LeaveType} /> */}
             <LeaveTypesTable />

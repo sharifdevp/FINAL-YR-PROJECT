@@ -1,12 +1,28 @@
 export const leaveTypes = [
-  { label: 'Annual', value: 'ANNUAL' },
-  { label: 'Health/Sick', value: 'SICK' },
-  { label: 'Emergency', value: 'EMERGENCY' },
-  { label: 'Family', value: 'FAMILY' },
-  { label: 'Maternity', value: 'MATERNITY' },
-  { label: 'Paternity', value: 'PATERNITY' },
-  { label: 'Unpaid', value: 'UNPAID' },
-  { label: 'Compensation', value: 'COMPENSATION' },
+  { label: 'Annual', value: 'ANNUAL', description: 'This is a leave type' },
+  { label: 'Health/Sick', value: 'SICK', description: 'This is a leave type' },
+  {
+    label: 'Emergency',
+    value: 'EMERGENCY',
+    description: 'This is a leave type',
+  },
+  { label: 'Family', value: 'FAMILY', description: 'This is a leave type' },
+  {
+    label: 'Maternity',
+    value: 'MATERNITY',
+    description: 'This is a leave type',
+  },
+  {
+    label: 'Paternity',
+    value: 'PATERNITY',
+    description: 'This is a leave type',
+  },
+  { label: 'Unpaid', value: 'UNPAID', description: 'This is a leave type' },
+  {
+    label: 'Compensation',
+    value: 'COMPENSATION',
+    description: 'This is a leave type',
+  },
 ] as const;
 
 export const orgDepartments = [
