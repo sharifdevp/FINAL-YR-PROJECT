@@ -1,8 +1,6 @@
 import Container from '@/components/Common/Container';
 import TableWrapper from '@/components/Common/TableWrapper';
 import ProfileTable from './ProfileTable';
-// import { getAllUsers } from '@/lib/data/getUserData';
-// import { User } from '@prisma/client';
 import { getCurrentUser } from '@/lib/sessions/userSession';
 
 export default async function RegularUsersPage() {
@@ -12,7 +10,16 @@ export default async function RegularUsersPage() {
     return <Container>Loading...</Container>;
   }
 
-  const userArray = currentUser ? [currentUser] : [];
+  // Ensure currentUser includes title and department
+  const userArray = currentUser
+    ? [
+        {
+          ...currentUser,
+          title: currentUser.titleName || 'Unknown Title', // Default value if title is null
+          department: currentUser.departmentName || 'Unknown Department', // Default value if department is null
+        },
+      ]
+    : [];
 
   return (
     <Container>
@@ -22,3 +29,26 @@ export default async function RegularUsersPage() {
     </Container>
   );
 }
+
+// import Container from '@/components/Common/Container';
+// import TableWrapper from '@/components/Common/TableWrapper';
+// import ProfileTable from './ProfileTable';
+// import { getCurrentUser } from '@/lib/sessions/userSession';
+
+// export default async function RegularUsersPage() {
+//   const currentUser = await getCurrentUser();
+
+//   if (currentUser === null) {
+//     return <Container>Loading...</Container>;
+//   }
+
+//   const userArray = currentUser ? [currentUser] : [];
+
+//   return (
+//     <Container>
+//       <TableWrapper title='My Profile'>
+//         <ProfileTable user={userArray} />
+//       </TableWrapper>
+//     </Container>
+//   );
+// }

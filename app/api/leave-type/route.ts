@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { leaveTypes } from '@/lib/dummy-data';
 
-export async function getLeaveTypes(req: NextRequest) {
+export async function GET() {
   return NextResponse.json(leaveTypes);
 }
+
 // import { NextRequest, NextResponse } from 'next/server';
 // import prisma from '@/lib/prisma';
 // // import { getCurrentUser } from '@/lib/sessions/userSession';

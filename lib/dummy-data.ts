@@ -1,43 +1,43 @@
 export const leaveTypes = [
   {
-    id: 'ltyp-1',
+    id: 1,
     label: 'Annual',
     value: 'ANNUAL',
     description: 'This is a leave type',
   },
   {
-    id: 'ltyp-2',
+    id: 2,
     label: 'Sick',
     value: 'SICK',
     description: 'This is a leave type',
   },
 
   {
-    id: 'ltyp-3',
+    id: 3,
     label: 'Maternity',
     value: 'MATERNITY',
     description: 'This is a leave type',
   },
   {
-    id: 'ltyp-4',
+    id: 4,
     label: 'Paternity',
     value: 'PATERNITY',
     description: 'This is a leave type',
   },
   {
-    id: 'ltyp-5',
+    id: 5,
     label: 'Emergency',
     value: 'EMERGENCY',
     description: 'This is a leave type',
   },
   {
-    id: 'ltyp-6',
+    id: 6,
     label: 'Compensation',
     value: 'COMPENSATION',
     description: 'This is a leave type',
   },
   {
-    id: 'ltyp-7',
+    id: 7,
     label: 'Unpaid',
     value: 'UNPAID',
     description: 'This is a leave type',

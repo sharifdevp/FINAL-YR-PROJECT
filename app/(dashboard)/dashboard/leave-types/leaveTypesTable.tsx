@@ -6,34 +6,40 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next';
 
 // Define interface for leave type
 interface LeaveType {
-  id: string;
+  id: number;
   label: string;
+  value: string;
   description: string;
 }
 
-const LeaveTypesTable = ({ leaveTypes }: { leaveTypes: LeaveType[] }) => (
-  <div className='rounded-lg shadow-md px-6 max-h-[50vh] overflow-y-auto bg-white dark:bg-black'>
-    <div className='py-5 px-10 sticky top-0 z-10 shadow-md bg-white dark:bg-slate-900'>
+interface LeaveTypesTableProps {
+  leaveTypes: LeaveType[];
+}
+
+const LeaveTypesTable = ({ leaveTypes }: LeaveTypesTableProps) => (
+  <div className='rounded-lg shadow-md px-6 max-h-[60vh] bg-white dark:bg-black ml-60 w-11/12'>
+    {/* <div className='py-5 px-10 sticky top-0 z-10 shadow-md bg-white dark:bg-slate-900'>
       <h2 className='text-2xl text-center font-bold tracking-tight'>
         Available Leave Types
       </h2>
-    </div>
+    </div> */}
 
-    <div className='relative overflow-x-auto'>
+    <div className='relative overflow-x-auto text-2xl '>
       <Table>
-        <TableHeader className='whitespace-nowrap'>
+        <TableHeader className='whitespace-nowrap text-xl '>
           <TableRow>
-            <TableHead>Title</TableHead>
+            <TableHead> </TableHead>
+            <TableHead>Name</TableHead>
             <TableHead>Description</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className='whitespace-nowrap'>
           {leaveTypes.map((leaveType) => (
             <TableRow key={leaveType.id}>
+              <TableCell className='font-medium px-2'>{leaveType.id}</TableCell>
               <TableCell className='font-medium'>{leaveType.label}</TableCell>
               <TableCell>{leaveType.description}</TableCell>
             </TableRow>
@@ -43,41 +49,6 @@ const LeaveTypesTable = ({ leaveTypes }: { leaveTypes: LeaveType[] }) => (
     </div>
   </div>
 );
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  try {
-    const res = await fetch(`http://localhost:3000/api/leave-type`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) {
-      console.error('Failed to fetch leave types');
-      return {
-        props: {
-          leaveTypes: [],
-        },
-      };
-    }
-
-    const leaveTypes: LeaveType[] = await res.json();
-
-    return {
-      props: {
-        leaveTypes,
-      },
-    };
-  } catch (error) {
-    console.error('Error fetching leave types:', error);
-    return {
-      props: {
-        leaveTypes: [],
-      },
-    };
-  }
-};
 
 export default LeaveTypesTable;
 

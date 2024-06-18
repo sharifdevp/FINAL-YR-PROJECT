@@ -79,6 +79,7 @@
 
 // export default UsersTable;
 
+'use client';
 import { useState } from 'react';
 import {
   Table,

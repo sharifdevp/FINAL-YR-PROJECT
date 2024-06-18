@@ -34,13 +34,13 @@ function SMSSender() {
     <div>
       <h2>Send SMS</h2>
       <input
-        type="tel"
-        placeholder="Phone Number"
+        type='tel'
+        placeholder='Phone Number'
         value={phoneNumber}
         onChange={(e) => setPhoneNumber(e.target.value)}
       />
       <textarea
-        placeholder="Message"
+        placeholder='Message'
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       ></textarea>

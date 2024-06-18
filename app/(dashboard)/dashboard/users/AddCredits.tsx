@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import DialogWrapper from "@/components/Common/DialogWrapper";
-import { FaPlus } from "react-icons/fa6";
-import CreditField from "./CreditField";
-import { FormEvent, useState } from "react";
-import { Button } from "@/components/ui/button";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import DialogWrapper from '@/components/Common/DialogWrapper';
+import { FaPlus } from 'react-icons/fa6';
+import CreditField from './CreditField';
+import { FormEvent, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 const creditTypes = [
   'annual',
-  'health/sick',
+  'sick',
   'maternity',
   'paternity',
   'emergency',
@@ -20,7 +20,7 @@ const creditTypes = [
 
 const initialCreditValues: { [key: string]: number } = {
   annual: 0,
-  health: 0,
+  sick: 0,
   maternity: 0,
   paternity: 0,
   emergency: 0,
@@ -35,8 +35,8 @@ type Props = {
 const AddCredits = ({ email, name }: Props) => {
   const [creditValues, setCreditValues] = useState(initialCreditValues);
   const [open, setOpen] = useState(false);
-  const router = useRouter()
-  
+  const router = useRouter();
+
   const handleCreditChange = (type: string, value: number) => {
     setCreditValues((prevValues) => ({ ...prevValues, [type]: value }));
   };
@@ -53,30 +53,30 @@ const AddCredits = ({ email, name }: Props) => {
         name,
       };
 
-      const res = await fetch("/api/balance", {
-        method: "POST",
+      const res = await fetch('/api/balance', {
+        method: 'POST',
         body: JSON.stringify(formattedValues),
       });
 
       if (res.ok) {
-        toast.success("Credits Submitted", { duration: 4000 });
-        setOpen(false)
-        router.refresh()
+        toast.success('Credits Submitted', { duration: 4000 });
+        setOpen(false);
+        router.refresh();
       } else {
         const errorMessage = await res.text();
 
         toast.error(`An error occured ${errorMessage}`, { duration: 6000 });
       }
     } catch (error) {
-      console.error("An error occurred:", error);
-      toast.error("An Unexpected error occured");
+      console.error('An error occurred:', error);
+      toast.error('An Unexpected error occured');
     }
   }
 
   return (
     <DialogWrapper
-      title="Add Credits"
-      descr="The Credits you are about to add are for this year only!"
+      title='Add Credits'
+      descr='The Credits you are about to add are for this year only!'
       icon={FaPlus}
       isBtn={false}
       open={open}
@@ -84,8 +84,8 @@ const AddCredits = ({ email, name }: Props) => {
     >
       <form onSubmit={SubmitCredits}>
         {creditTypes.map((type) => (
-          <div key={type} className="my-3">
-            {["Credit"].map((suffix) => (
+          <div key={type} className='my-3'>
+            {['Credit'].map((suffix) => (
               <CreditField
                 key={type + suffix}
                 name={`${type}${suffix}`}
@@ -97,7 +97,7 @@ const AddCredits = ({ email, name }: Props) => {
             ))}
           </div>
         ))}
-        <Button type="submit">Submit</Button>
+        <Button type='submit'>Submit</Button>
       </form>
     </DialogWrapper>
   );
