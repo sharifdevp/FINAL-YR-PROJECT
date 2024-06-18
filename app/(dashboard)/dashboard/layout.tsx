@@ -1,6 +1,6 @@
 import Header from '@/components/Common/Header';
 import SideBar from '@/components/Common/SideBar';
-import { getCurrentUser } from '@/lib/sessions/userSession';
+import { getCurrentUser } from '@/lib/sessions/session';
 import { User } from '@prisma/client';
 
 export default async function DashLayout({
