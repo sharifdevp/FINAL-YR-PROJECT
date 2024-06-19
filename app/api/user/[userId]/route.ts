@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/sessions/session';
 import { Role } from '@prisma/client';
@@ -11,27 +11,40 @@ type EditUserBody = {
   role: Role;
 };
 
-// Extend Request type to include query property
-interface ExtendedRequest extends NextApiRequest {
-  query: {
-    userId: string; // Define the query parameter you expect
-  };
-}
-
-// PATCH endpoint handler
-export async function handlePatch(req: ExtendedRequest, res: NextApiResponse) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { userId: string } }
+) {
   const loggedInUser = await getCurrentUser();
   if (loggedInUser?.role !== 'ADMIN') {
-    return res
-      .status(403)
-      .json({ error: 'You are not permitted to perform this action' });
+    return NextResponse.json(
+      { error: 'You are not permitted to perform this action' },
+      { status: 403 }
+    );
   }
 
   try {
-    const { userId } = req.query; // Access userId from query parameters
-    const body: EditUserBody = req.body; // Assuming body is properly parsed
+    const { userId } = params; // Access userId from route parameters
+    const body: EditUserBody = await req.json(); // Parse the request body
 
     const { phone, departmentId, titleId, role } = body;
+
+    // Fetch department and title details
+    const department = await prisma.department.findUnique({
+      where: { id: departmentId },
+    });
+    const title = await prisma.orgnTitle.findUnique({ where: { id: titleId } });
+
+    if (!department) {
+      return NextResponse.json(
+        { error: 'Department not found' },
+        { status: 404 }
+      );
+    }
+
+    if (!title) {
+      return NextResponse.json({ error: 'Title not found' }, { status: 404 });
+    }
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
@@ -40,33 +53,29 @@ export async function handlePatch(req: ExtendedRequest, res: NextApiResponse) {
         departmentId,
         titleId,
         role,
-      },
-      include: {
-        department: true, // Fetches department details
-        title: true, // Fetches title details
+        departmentName: department.label, // Assuming departmentName is a field in the User model
+        titleName: title.titlename, // Assuming titleName is a field in the User model
       },
     });
 
-    // Extract department name and title name
-    const departmentName =
-      updatedUser.department?.label ?? 'Department not found';
-    const titleName = updatedUser.title?.titlename ?? 'Title not found';
-
-    return res.status(200).json({
+    return NextResponse.json({
       message: 'User updated successfully',
       user: {
         id: updatedUser.id,
         name: updatedUser.name,
-        email: updatedUser.email,
+        // email: updatedUser.email,
         phone: updatedUser.phone,
         role: updatedUser.role,
-        departmentName: departmentName,
-        titleName: titleName,
+        departmentName: department.label,
+        titleName: title.titlename,
       },
     });
   } catch (error) {
     console.error('Error updating user:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 

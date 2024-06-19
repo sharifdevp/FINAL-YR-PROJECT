@@ -21,12 +21,6 @@ interface LeaveTypesTableProps {
 
 const LeaveTypesTable = ({ leaveTypes }: LeaveTypesTableProps) => (
   <div className='rounded-lg shadow-md px-6 max-h-[60vh] bg-white dark:bg-black ml-60 w-11/12'>
-    {/* <div className='py-5 px-10 sticky top-0 z-10 shadow-md bg-white dark:bg-slate-900'>
-      <h2 className='text-2xl text-center font-bold tracking-tight'>
-        Available Leave Types
-      </h2>
-    </div> */}
-
     <div className='relative overflow-x-auto text-2xl '>
       <Table>
         <TableHeader className='whitespace-nowrap text-xl '>

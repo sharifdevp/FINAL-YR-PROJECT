@@ -15,18 +15,20 @@ export default async function RegularUsersPage() {
     ? [
         {
           ...currentUser,
-          title: currentUser.titleName || 'Unknown Title', // Default value if title is null
-          department: currentUser.departmentName || 'Unknown Department', // Default value if department is null
+          title: currentUser.titleName || ' ', // Default value if title is null
+          department: currentUser.departmentName || ' ', // Default value if department is null
         },
       ]
     : [];
 
   return (
-    <Container>
-      <TableWrapper title='My Profile'>
-        <ProfileTable user={userArray} />
-      </TableWrapper>
-    </Container>
+    // <div className='max-h-[40vh]'>
+      <Container>
+        <TableWrapper title='My Profile'>
+          <ProfileTable user={userArray} />
+        </TableWrapper>
+      </Container>
+    // </div>
   );
 }
 
