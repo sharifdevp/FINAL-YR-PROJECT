@@ -59,7 +59,7 @@ const OrgnTitlesTable = () => {
   };
 
   return (
-    <div className='rounded-lg shadow-md px-6 max-h-[50vh] overflow-y-auto bg-white dark:bg-black'>
+    <div className='rounded-lg shadow-md px-6 max-h-[68vh] overflow-y-auto bg-white dark:bg-black'>
       <div className='py-5 px-10 sticky top-0 z-10 shadow-md bg-white dark:bg-slate-900'>
         <h2 className='text-2xl text-center font-bold tracking-tight'>
           Available Employee Titles
@@ -70,7 +70,7 @@ const OrgnTitlesTable = () => {
         <Table>
           <TableHeader className='whitespace-nowrap'>
             <TableRow>
-              <TableHead>Name</TableHead>
+              <TableHead>Title Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Edit</TableHead>
               <TableHead>Delete</TableHead>
@@ -84,7 +84,7 @@ const OrgnTitlesTable = () => {
                 <TableCell>
                   <EditOrgnTitle
                     id={title.id}
-                    titleName={title.titlename}
+                    titlename={title.titlename}
                     description={title.description}
                   />
                 </TableCell>

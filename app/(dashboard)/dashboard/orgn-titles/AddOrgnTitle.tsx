@@ -54,7 +54,7 @@ const AddDepartment = () => {
       });
 
       if (res.ok) {
-        toast.success('Employee title Added succcessfully', { duration: 8000 });
+        toast.success('Employee title Added', { duration: 8000 });
         form.reset();
         router.refresh();
       } else {

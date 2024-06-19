@@ -21,30 +21,30 @@ import { useRouter } from 'next/navigation';
 
 type EditOrgnTitleProps = {
   id: string;
-  titleName: string;
+  titlename: string;
   description: string;
 };
 
-const EditOrgnTitle = ({ id, titleName, description }: EditOrgnTitleProps) => {
+const EditOrgnTitle = ({ id, titlename, description }: EditOrgnTitleProps) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
   const formSchema = z.object({
-    titleName: z.string().min(1, 'Title name is required'),
+    titlename: z.string().min(1, 'Title name is required'),
     description: z.string().optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      titleName: titleName,
+      titlename: titlename,
       description: description || '',
     },
   });
 
   async function SubmitEditOrgnTitle(values: z.infer<typeof formSchema>) {
     try {
-      const res = await fetch(`/api/orgnTitle/${id}`, {
+      const res = await fetch(`/api/orgn-title/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -53,12 +53,12 @@ const EditOrgnTitle = ({ id, titleName, description }: EditOrgnTitleProps) => {
       });
 
       if (res.ok) {
-        toast.success('Title Edited Successfully', { duration: 1500 });
+        toast.success('Employee title edited', { duration: 8000 });
         setOpen(false);
         router.refresh();
       } else {
         const errorMessage = await res.text();
-        toast.error(`An error occurred: ${errorMessage}`, { duration: 1500 });
+        toast.error(`An error occurred: ${errorMessage}`, { duration: 8000 });
       }
     } catch (error) {
       console.error('An error occurred:', error);
@@ -68,7 +68,7 @@ const EditOrgnTitle = ({ id, titleName, description }: EditOrgnTitleProps) => {
 
   return (
     <DialogWrapper
-      title='Edit Title'
+      title='Edit Employee Title'
       icon={IoPencil}
       isBtn={false}
       open={open}
@@ -81,12 +81,12 @@ const EditOrgnTitle = ({ id, titleName, description }: EditOrgnTitleProps) => {
         >
           <FormField
             control={form.control}
-            name='titleName'
+            name='titlename'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Title Name</FormLabel>
                 <FormControl>
-                  <Input placeholder='Title Name' {...field} />
+                  <Input placeholder='Titlename' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -105,7 +105,7 @@ const EditOrgnTitle = ({ id, titleName, description }: EditOrgnTitleProps) => {
               </FormItem>
             )}
           />
-          <Button type='submit'>Submit</Button>
+          <Button type='submit'>Save changes</Button>
         </form>
       </Form>
     </DialogWrapper>
@@ -113,7 +113,6 @@ const EditOrgnTitle = ({ id, titleName, description }: EditOrgnTitleProps) => {
 };
 
 export default EditOrgnTitle;
-
 
 // 'use client';
 

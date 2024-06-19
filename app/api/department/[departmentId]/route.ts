@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { getCurrentUser } from '@/lib/sessions/userSession';
+import { getCurrentUser } from '@/lib/sessions/session';
 
 type SubmittedDepartment = {
   label: string;
@@ -65,7 +65,7 @@ export async function DELETE(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { message: 'Leave type deleted successfully' },
+      { message: 'department deleted successfully' },
       { status: 200 }
     );
   } catch (error) {
@@ -120,7 +120,7 @@ export async function PATCH(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { message: 'Department updated successfully' },
+      { message: 'Department edited successfully' },
       { status: 200 }
     );
   } catch (error) {

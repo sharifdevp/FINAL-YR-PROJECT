@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/sessions/userSession';
+import { getCurrentUser } from '@/lib/sessions/session';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
@@ -61,7 +61,7 @@ export async function DELETE(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { message: 'Organisation Title deleted successfully' },
+      { message: 'Organisation Title deleted' },
       { status: 200 }
     );
   } catch (error) {
@@ -115,7 +115,7 @@ export async function PATCH(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { message: 'Organisation Title updated successfully' },
+      { message: 'Organisation Title updated' },
       { status: 200 }
     );
   } catch (error) {

@@ -51,7 +51,7 @@ const EditDepartment = ({ id, label, desc }: EditDepartmentProps) => {
       });
 
       if (res.ok) {
-        toast.success('Department Edited Successfully', { duration: 10000 });
+        toast.success('Department Edited', { duration: 10000 });
         setOpen(false);
         router.refresh();
       } else {
@@ -103,7 +103,7 @@ const EditDepartment = ({ id, label, desc }: EditDepartmentProps) => {
               </FormItem>
             )}
           />
-          <Button type='submit'>Submit</Button>
+          <Button type='submit'>Save changes</Button>
         </form>
       </Form>
     </DialogWrapper>

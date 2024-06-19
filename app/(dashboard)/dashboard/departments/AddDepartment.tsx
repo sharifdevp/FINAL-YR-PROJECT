@@ -54,7 +54,7 @@ const AddDepartment = () => {
       });
 
       if (res.ok) {
-        toast.success('Department Added Successfully', { duration: 15000 });
+        toast.success('Department Added', { duration: 15000 });
         form.reset();
         router.refresh();
       } else {
