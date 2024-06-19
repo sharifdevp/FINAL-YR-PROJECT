@@ -68,6 +68,7 @@ model User {
   departmentName String?
   departmentId  String?
   department    Department?  @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  birthName        String?
 }
 
 model LeaveType {

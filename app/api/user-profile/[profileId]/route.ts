@@ -4,6 +4,7 @@ import prisma from '@/lib/prisma';
 
 type EditProfileBody = {
   phone: string;
+  birthName: string;
   id: string;
   image: string; // Added image field
 };
@@ -16,11 +17,11 @@ export async function PATCH(req: Request) {
 
   try {
     const body: EditProfileBody = await req.json();
-    const { phone, id, image } = body;
+    const { phone,birthName, id, image } = body;
 
     await prisma.user.update({
       where: { id },
-      data: { phone, image }, // Updating these fields in the db
+      data: { phone, birthName, image }, // Updating these fields in the db
     });
 
     return NextResponse.json({ message: 'Success' }, { status: 200 });

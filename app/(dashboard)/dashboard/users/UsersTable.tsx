@@ -203,6 +203,7 @@ const UsersTable = ({ users }: UserProps) => {
         <TableRow>
           <TableHead>Profile image/avatar</TableHead>
           <TableHead>User Name</TableHead>
+          <TableHead>Employee Name</TableHead>
           <TableHead>Email</TableHead>
           <TableHead>Phone</TableHead>
           <TableHead>Department</TableHead>
@@ -227,6 +228,7 @@ const UsersTable = ({ users }: UserProps) => {
               </Avatar>
             </TableCell>
             <TableCell className='font-medium'>{user.name}</TableCell>
+            <TableCell className='font-medium'>{user.birthName}</TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>{user.phone}</TableCell>
             <TableCell>

@@ -33,12 +33,14 @@ const EditProfile = ({ user, onUpdateImage }: EditUserProps) => {
 
   const formSchema = z.object({
     phone: z.string().max(50),
+    birthName: z.string().max(50),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       phone: user.phone as string,
+      birthName: user.birthName as string,
     },
   });
 
@@ -124,6 +126,19 @@ const EditProfile = ({ user, onUpdateImage }: EditUserProps) => {
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
                   <Input placeholder='Phone' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='birthName'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Biological Name(in full)</FormLabel>
+                <FormControl>
+                  <Input placeholder='birthName' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

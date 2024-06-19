@@ -18,6 +18,7 @@ interface UserProps {
     title: string | null;
     manager: string | null;
     department: string | null;
+    birthName: string | null;
   }[];
 }
 
@@ -80,7 +81,11 @@ const ProfileTable = ({ user }: UserProps) => {
               </p>
               <p>
                 <strong>Role:</strong>{' '}
-                <Badge variant='secondary'>Regular {userData.role}</Badge>
+                <Badge variant='secondary'> {userData.role}</Badge>
+              </p>
+              <p>
+                <strong>Biological Name:</strong>{' '}
+                <Badge variant='secondary'>{userData.birthName}</Badge>
               </p>
               <div className='flex items-center space-x-2'>
                 <p>
