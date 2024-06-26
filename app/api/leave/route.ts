@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/sessions/userSession';
+import { getCurrentUser } from '@/lib/sessions/session';
 import { differenceInDays, parseISO } from 'date-fns';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma'; // Corrected import statement

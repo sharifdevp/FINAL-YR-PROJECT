@@ -1,5 +1,5 @@
 import calculateAndUpdateBalances from '@/lib/calculateBalances';
-import { getCurrentUser } from '@/lib/sessions/userSession';
+import { getCurrentUser } from '@/lib/sessions/session';
 import { LeaveStatus } from '@prisma/client';
 import { NextResponse } from 'next/server';
 

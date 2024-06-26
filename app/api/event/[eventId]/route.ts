@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { getCurrentUser } from '@/lib/sessions/userSession';
+import { getCurrentUser } from '@/lib/sessions/session';
 
 type SubmittedEvent = {
   title: string;
@@ -29,10 +29,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(
-      { message: 'Event created' },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: 'Event created' }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

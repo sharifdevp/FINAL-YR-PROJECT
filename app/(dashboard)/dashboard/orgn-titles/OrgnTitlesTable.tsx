@@ -62,7 +62,7 @@ const OrgnTitlesTable = () => {
     <div className='rounded-lg shadow-md px-6 max-h-[68vh] overflow-y-auto bg-white dark:bg-black'>
       <div className='py-5 px-10 sticky top-0 z-10 shadow-md bg-white dark:bg-slate-900'>
         <h2 className='text-2xl text-center font-bold tracking-tight'>
-          Available Employee Titles
+          Available Job Titles
         </h2>
       </div>
 

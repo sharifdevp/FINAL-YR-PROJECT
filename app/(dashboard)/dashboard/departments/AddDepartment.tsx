@@ -54,12 +54,12 @@ const AddDepartment = () => {
       });
 
       if (res.ok) {
-        toast.success('Department Added', { duration: 15000 });
+        toast.success('Department Added', { duration: 8000 });
         form.reset();
         router.refresh();
       } else {
         const errorMessage = await res.text();
-        toast.error(`An error occurred: ${errorMessage}`, { duration: 15000 });
+        toast.error(`An error occurred: ${errorMessage}`, { duration: 8000 });
       }
     } catch (error) {
       console.error('An error occurred:', error);

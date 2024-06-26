@@ -64,7 +64,6 @@ model User {
   sessions      Session[]
   balances      Balances[]
   leaves        Leave[]
-  // departments   Department[] 
   departmentName String?
   departmentId  String?
   department    Department?  @relation(fields: [departmentId], references: [id], onDelete: Cascade)

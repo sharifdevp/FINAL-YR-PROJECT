@@ -70,7 +70,7 @@ const AddDepartment = () => {
   return (
     <div className='bg-white p-4 rounded-md shadow-md dark:bg-black'>
       <h2 className='text-2xl text-center font-bold tracking-tight'>
-        Add a title for employees
+        Add a job title for employees
       </h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>

@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/sessions/userSession';
+import { getCurrentUser } from '@/lib/sessions/session';
 import prisma from '@/lib/prisma';
 
 export async function getLeaveTypesData() {

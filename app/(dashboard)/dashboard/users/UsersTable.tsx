@@ -201,9 +201,9 @@ const UsersTable = ({ users }: UserProps) => {
     <Table>
       <TableHeader className='whitespace-nowrap'>
         <TableRow>
-          <TableHead>Profile image/avatar</TableHead>
+          <TableHead>Profile Pic/avatar</TableHead>
           <TableHead>User Name</TableHead>
-          <TableHead>Employee Name</TableHead>
+          <TableHead>Staff Name</TableHead>
           <TableHead>Email</TableHead>
           <TableHead>Phone</TableHead>
           <TableHead>Department</TableHead>
@@ -220,7 +220,7 @@ const UsersTable = ({ users }: UserProps) => {
               <Avatar className='w-16 h-16'>
                 <AvatarImage
                   src={user.image ? user.image : '/fallback-image.jpg'}
-                  alt={user.name || 'User Avatar'}
+                  alt={user.name || 'User profile image'}
                 />
                 <AvatarFallback>
                   {user.name?.charAt(0).toUpperCase()}

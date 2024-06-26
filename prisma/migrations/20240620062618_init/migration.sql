@@ -52,6 +52,7 @@ CREATE TABLE `User` (
     `manager` VARCHAR(191) NULL,
     `departmentName` VARCHAR(191) NULL,
     `departmentId` VARCHAR(191) NULL,
+    `birthName` VARCHAR(191) NULL,
 
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)

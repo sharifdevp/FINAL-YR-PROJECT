@@ -1,4 +1,4 @@
-import { getCurrentUser } from '../sessions/userSession';
+import { getCurrentUser } from '../sessions/session';
 import prisma from '@/lib/prisma';
 
 export async function getAllUsers() {

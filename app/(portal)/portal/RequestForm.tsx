@@ -89,12 +89,12 @@ const RequestForm = ({ user }: Props) => {
       });
 
       if (res.ok) {
-        toast.success('Leave Submitted', { duration: 4000 });
+        toast.success('Request Submitted', { duration: 9000 });
         setOpen(false);
         form.reset();
       } else {
         const errorMessage = await res.text();
-        toast.error(`An error occurred: ${errorMessage}`, { duration: 6000 });
+        toast.error(`An error occurred: ${errorMessage}`, { duration: 9000 });
       }
     } catch (error) {
       console.error('An error occurred:', error);

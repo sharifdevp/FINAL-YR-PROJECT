@@ -63,7 +63,6 @@ export async function PATCH(
       user: {
         id: updatedUser.id,
         name: updatedUser.name,
-        // email: updatedUser.email,
         phone: updatedUser.phone,
         role: updatedUser.role,
         departmentName: department.label,

@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     const emailContent = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <h1 style="color: #4CAF50;">Leave Approval Notice</h1>
-        <p><strong>To Employee:</strong> ${userEmail}</p>
+        <p><strong>To User/Staff:</strong> ${userEmail}</p>
          <p><strong>Status:</strong> ${status}</p>
         <p><strong>Comment notes:</strong> ${notes}</p>
         <br>

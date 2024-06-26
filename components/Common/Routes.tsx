@@ -22,14 +22,12 @@ import { AiOutlineCalendar } from 'react-icons/ai';
 import { FaUserTag } from 'react-icons/fa';
 import { RiContactsLine } from 'react-icons/ri';
 
-
 import { RiCalendarEventLine } from 'react-icons/ri';
 import { MdOutlineBalance } from 'react-icons/md';
 import { TbListCheck, TbListDetails } from 'react-icons/tb';
-import { IoPeopleCircleOutline } from 'react-icons/io5';
+// import { IoPeopleCircleOutline } from 'react-icons/io5';
 
 import { IoBusiness } from 'react-icons/io5';
-
 
 export const AdminRoutes = [
   { title: 'Portal', url: '/portal', icon: HiMiniComputerDesktop },
@@ -44,7 +42,7 @@ export const AdminRoutes = [
   { title: 'Users', url: '/dashboard/users', icon: HiOutlineUserGroup },
   {
     title: 'Events',
-    url: '/dashboard/settings',
+    url: '/dashboard/events',
     icon: RiCalendarEventLine,
   },
   {
@@ -54,7 +52,7 @@ export const AdminRoutes = [
     icon: IoBusiness,
   },
   {
-    title: 'Organisation Titles',
+    title: 'Job Titles',
     url: '/dashboard/orgn-titles',
     // icon: HiOutlineIdentification,
     icon: FaUserTag,
@@ -84,12 +82,12 @@ export const ModeratorRoutes = [
   { title: 'Users', url: '/dashboard/users', icon: HiOutlineUserGroup },
   {
     title: 'Events',
-    url: '/dashboard/settings',
+    url: '/dashboard/events',
     icon: RiCalendarEventLine,
   },
   {
-    title: 'Settings',
-    url: '/dashboard/settings',
+    title: 'Events',
+    url: '/dashboard/events',
     icon: HiOutlineCog6Tooth,
   },
 ];

@@ -68,7 +68,7 @@ const EditOrgnTitle = ({ id, titlename, description }: EditOrgnTitleProps) => {
 
   return (
     <DialogWrapper
-      title='Edit Employee Title'
+      title='Edit Job Title'
       icon={IoPencil}
       isBtn={false}
       open={open}

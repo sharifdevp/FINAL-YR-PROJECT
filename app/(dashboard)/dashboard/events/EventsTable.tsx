@@ -40,10 +40,10 @@ const EventsTable = ({ events: initialEvents }: UserProps) => {
   };
 
   return (
-    <div className='rounded-lg shadow-md px-6 max-h-[50vh] overflow-y-auto bg-white dark:bg-black'>
+    <div className='rounded-lg shadow-md px-6 max-h-[70vh] overflow-y-auto bg-white dark:bg-black'>
       <div className='py-5 px-10 sticky top-0 z-10 shadow-md bg-white dark:bg-slate-900'>
         <h2 className='text-2xl text-center font-bold tracking-tight'>
-          Available Events
+          Upcoming Events
         </h2>
       </div>
 
