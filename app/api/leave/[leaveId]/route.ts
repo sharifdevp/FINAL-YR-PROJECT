@@ -51,7 +51,7 @@ export async function PATCH(req: Request) {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'User credits not available for this leave type' },
       { status: 500 }
     );
   }
