@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -49,25 +49,26 @@ enum Role {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  name          String?
-  email         String?    @unique
-  emailVerified DateTime?
-  image         String?
-  role          Role       @default(USER)
-  phone         String?
-  title         OrgnTitle?  @relation(fields: [titleId], references: [id], onDelete: Cascade)
-  titleId       String? 
-  titleName     String?
-  manager       String?
-  accounts      Account[]
-  sessions      Session[]
-  balances      Balances[]
-  leaves        Leave[]
-  departmentName String?
-  departmentId  String?
-  department    Department?  @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-  birthName        String?
+  id              String       @id @default(cuid())
+  name            String?
+  email           String?      @unique
+  emailVerified   DateTime?
+  image           String?
+  role            Role         @default(USER)
+  phone           String?
+  title           OrgnTitle?   @relation(fields: [titleId], references: [id], onDelete: Cascade)
+  titleId         String?
+  titleName       String?
+  manager         String?
+  departmentName  String?
+  departmentId    String?
+  department      Department?  @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  accounts        Account[]
+  sessions        Session[]
+  balances        Balances[]
+  leaves          Leave[]
+  onLeave         Boolean      @default(false)
+  birthName       String?
 }
 
 model LeaveType {
@@ -76,6 +77,7 @@ model LeaveType {
   values      String   @default("[\"Credit\", \"Used\", \"Available\"]")
   category    String   // Should be a lower case of the title
   description String?
+  leaves      Leave[]  @relation("LeaveTypeToLeave")
 }
 
 enum LeaveStatus {
@@ -88,12 +90,12 @@ enum LeaveStatus {
 model Leave {
   id            String      @id @default(cuid())
   type          String
-  year          String @default("")
+  year          String      @default("")
   startDate     DateTime
   endDate       DateTime
   days          Int
   userName      String 
-  phoneNumber   String?    
+  phoneNumber   String?
   userNote      String?
   tasksLink     String?
   userEmail     String
@@ -102,10 +104,14 @@ model Leave {
   moderatorNote String?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @default(now())
-  fileContent   Bytes? 
-  userId        String     
-  user          User       @relation(fields: [userId], references: [id])
-  // birthName     String?
+  fileContent   Bytes?
+  userId        String
+  leaveTypeId   String?
+  requestedOn   DateTime    @default(now())
+  approvedBy    String?
+  department   String?
+  user          User        @relation(fields: [userId], references: [id])
+  leaveType     LeaveType?  @relation(fields: [leaveTypeId], references: [id], name: "LeaveTypeToLeave")
 }
 
 model Balances {
@@ -147,7 +153,6 @@ model Department {
   id          String   @id @default(cuid())
   label       String
   desc        String
-  // user        User?  @relation(fields: [userId ], references: [id], onDelete: Cascade)
   userId      User[]
 }
 
@@ -157,146 +162,3 @@ model OrgnTitle {
   description String
   user        User[]
 }
-
-
-
-// // This is our Prisma schema file,
-// generator client {
-//   provider = "prisma-client-js"
-// }
-
-// datasource db {
-//   provider = "mysql"
-//   url      = env("DATABASE_URL")
-// }
-
-// model Account {
-//   id                String  @id @default(cuid())
-//   userId            String
-//   type              String
-//   provider          String
-//   providerAccountId String
-//   refresh_token     String? @db.Text
-//   access_token      String? @db.Text
-//   expires_at        Int?
-//   token_type        String?
-//   scope             String?
-//   id_token          String? @db.Text
-//   session_state     String?
-
-//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-//   @@unique([provider, providerAccountId])
-// }
-
-// model Session {
-//   id           String   @id @default(cuid())
-//   sessionToken String   @unique
-//   userId       String
-//   expires      DateTime
-//   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-// }
-
-// model VerificationToken {
-//   identifier String
-//   token      String   @unique
-//   expires    DateTime
-
-//   @@unique([identifier, token])
-// }
-
-// enum Role {
-//   USER
-//   ADMIN
-//   MODERATOR
-// }
-
-// model User {
-//   id            String     @id @default(cuid())
-//   name          String?
-//   email         String?    @unique
-//   emailVerified DateTime?
-//   image         String?
-//   role          Role       @default(USER)
-//   phone         String?
-//   title         String?
-//   manager       String?
-//   department    String?
-//   accounts      Account[]
-//   sessions      Session[]
-//   balances      Balances[]
-//   // leaves         Leave[]  // Ive added this
-// }
-
-// model LeaveType {
-//   id          String   @id @default(cuid())
-//   title       String
-//   values      String   @default("[\"Credit\", \"Used\", \"Available\"]")
-//   category    String   // Should be a lower case of the title
-//   description String?
-// }
-
-// enum LeaveStatus {
-//   PENDING
-//   APPROVED
-//   INMODERATION
-//   REJECTED
-// }
-
-// model Leave {
-//   id            String      @id @default(cuid())
-//   type          String
-//   year String @default("")
-//   startDate     DateTime
-//   endDate       DateTime
-//   days          Int
-//   userName      String 
-//   phoneNumber   String?    // Ive added phoneNumber field here
-//   userNote      String?
-//   tasksLink     String?
-//   userEmail     String
-//   status        LeaveStatus @default(PENDING)
-//   moderator     String?
-//   moderatorNote String?
-//   createdAt     DateTime    @default(now())
-//   updatedAt     DateTime    @default(now())
-//   fileContent   Bytes? // This stores the binary data of the file
-//     userId      String     // Ive added userId field
-// }
-
-// model Balances {
-//   id                 String @id @default(cuid())
-//   year               String
-//   annualCredit       Int?   @default(0)
-//   annualUsed         Int?   @default(0)
-//   annualAvailable    Int?   @default(0)
-//   sickCredit         Int?   @default(0)
-//   sickUsed           Int?   @default(0)
-//   sickAvailable      Int?   @default(0)
-//   maternityCredit    Int?   @default(0)
-//   maternityUsed      Int?   @default(0)
-//   maternityAvailable Int?   @default(0)
-//   paternityCredit    Int?   @default(0)
-//   paternityUsed      Int?   @default(0)
-//   paternityAvailable Int?   @default(0)
-//   emergencyCredit    Int?   @default(0)
-//   emergencyUsed      Int?   @default(0)
-//   emergencyAvailable  Int?   @default(0)
-//   compensationCredit    Int?   @default(0)
-//   compensationUsed      Int?   @default(0)
-//   compensationAvailable  Int?   @default(0)
-//   unpaidUsed         Int?   @default(0)
-//   name               String
-//   email              String
-//   user               User   @relation(fields: [email], references: [email], onDelete: Cascade)
-// }
-
-// model Events {
-//   id          String   @id @default(cuid())
-//   title       String
-//   description String?
-//   startDate   DateTime
-//   endDate     DateTime?
-// }
-
-

@@ -2,29 +2,21 @@ import {
   HiMiniComputerDesktop,
   HiOutlineCog6Tooth,
   HiOutlineSquares2X2,
-  HiOutlineUserGroup,
   HiOutlineUserCircle,
+  HiOutlineUserGroup,
 } from 'react-icons/hi2';
 // import { FaRegListAlt } from 'react-icons/fa';
 import { FiList } from 'react-icons/fi';
-import {
-  HiOutlineOfficeBuilding,
-  HiOutlineIdentification,
-} from 'react-icons/hi';
-import { FaBuilding } from 'react-icons/fa';
-import { MdBusiness } from 'react-icons/md';
 
 // import { MdOutlineCategory } from 'react-icons/md';
 // import { BiCategory } from 'react-icons/bi';
 // import { AiOutlineTags } from 'react-icons/ai';
 // import { RiFileList3Line } from 'react-icons/ri';
-import { AiOutlineCalendar } from 'react-icons/ai';
 import { FaUserTag } from 'react-icons/fa';
-import { RiContactsLine } from 'react-icons/ri';
 
-import { RiCalendarEventLine } from 'react-icons/ri';
 import { MdOutlineBalance } from 'react-icons/md';
-import { TbListCheck, TbListDetails } from 'react-icons/tb';
+import { RiCalendarEventLine } from 'react-icons/ri';
+import { TbListCheck } from 'react-icons/tb';
 // import { IoPeopleCircleOutline } from 'react-icons/io5';
 
 import { IoBusiness } from 'react-icons/io5';
@@ -57,6 +49,7 @@ export const AdminRoutes = [
     // icon: HiOutlineIdentification,
     icon: FaUserTag,
   },
+  { title: "Report", url: "/dashboard/report", icon: TbListCheck },
 ];
 
 export const UserRoutes = [

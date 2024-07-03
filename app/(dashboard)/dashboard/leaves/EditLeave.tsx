@@ -133,7 +133,7 @@ const EditLeave = ({
           throw new Error('Failed to send email');
         }
 
-        toast.success('Approval Action taken Successfully', {
+        toast.success('Approval Action Successful', {
           duration: 15000,
         });
 

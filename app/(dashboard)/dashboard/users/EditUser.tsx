@@ -113,7 +113,7 @@ const EditUser = ({ user, onUpdate }: EditUserProps) => {
 
       if (res.ok) {
         const data = await res.json();
-        toast.success('User Edited Successfully', { duration: 8000 });
+        toast.success('User Update Successful', { duration: 8000 });
         onUpdate(data.user);
         setOpen(false);
         router.refresh();
