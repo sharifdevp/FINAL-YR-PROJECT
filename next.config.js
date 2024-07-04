@@ -1,8 +1,10 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {}
+require('dotenv').config();
+// console.log(process.env.DATABASE_URL); // This should print the DATABASE_URL value
 
-//module.exports = nextConfig
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
 module.exports = {
-    reactStrictMode: true,
-    swcMinify: false,
+  reactStrictMode: true,
+  swcMinify: false,
 };

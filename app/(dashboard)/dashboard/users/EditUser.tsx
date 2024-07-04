@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import DialogWrapper from "@/components/Common/DialogWrapper";
-import toast from "react-hot-toast";
-import { IoPencil } from "react-icons/io5";
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import DialogWrapper from '@/components/Common/DialogWrapper';
+import { UserRoles } from '@/lib/dummy-data';
+import toast from 'react-hot-toast';
+import { IoPencil } from 'react-icons/io5';
 import {
   Form,
   FormControl,
@@ -13,83 +14,124 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "@/components/ui/command";
+} from '@/components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { PiCaretUpDownBold } from "react-icons/pi";
-import { cn } from "@/lib/utils";
-import { UserRoles, orgDepartments, orgTitles } from "@/lib/dummy-data";
-import { BsCheckLg } from "react-icons/bs";
-import { User } from "@prisma/client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { PiCaretUpDownBold } from 'react-icons/pi';
+import { BsCheckLg } from 'react-icons/bs';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { User } from '@prisma/client';
+import { cn } from '@/lib/utils';
 
 type EditUserProps = {
   user: User;
+  onUpdate: (updatedUser: User) => void;
 };
 
-const EditUser = ({ user }: EditUserProps) => {
+const EditUser = ({ user, onUpdate }: EditUserProps) => {
   const [open, setOpen] = useState(false);
-  const router = useRouter()
-  
+  const [departments, setDepartments] = useState<
+    { id: string; label: string }[]
+  >([]);
+  const [titles, setTitles] = useState<{ id: string; titlename: string }[]>([]);
+  const router = useRouter();
+
   const formSchema = z.object({
+    id: z.string(),
     phone: z.string().max(50),
-
-    department: z.string(),
-
-    title: z.string(),
-
-    role: z.enum(UserRoles),
+    departmentId: z.string(),
+    titleId: z.string(),
+    role: z.string(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      id: user.id,
       phone: user.phone as string,
-      department: user.department as string,
-      title: user.title as string,
+      departmentId: user.departmentId as string,
+      titleId: user.titleId as string,
       role: user.role,
     },
   });
 
-  async function SubmitEditUser(values: z.infer<typeof formSchema>) {
-    const id = user.id;
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const res = await fetch('/api/department');
+        if (!res.ok) {
+          throw new Error('Failed to fetch departments');
+        }
+        const data = await res.json();
+        setDepartments(data);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+        toast.error('Error fetching departments');
+      }
+    };
+
+    const fetchTitles = async () => {
+      try {
+        const res = await fetch('/api/orgn-title');
+        if (!res.ok) {
+          throw new Error('Failed to fetch titles');
+        }
+        const data = await res.json();
+        setTitles(data);
+      } catch (error) {
+        console.error('Error fetching titles:', error);
+        toast.error('Error fetching titles');
+      }
+    };
+
+    fetchDepartments();
+    fetchTitles();
+  }, []);
+
+  async function submitEditUser(values: z.infer<typeof formSchema>) {
     try {
-      const res = await fetch("/api/user/userId", {
-        method: "PATCH",
-        body: JSON.stringify({ ...values, id }),
+      const res = await fetch(`/api/user/${values.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
       });
 
       if (res.ok) {
-        toast.success("User Edited Successfully", { duration: 4000 });
-        setOpen(false)
-        router.refresh()
+        const data = await res.json();
+        toast.success('User Update Successful', { duration: 8000 });
+        onUpdate(data.user);
+        setOpen(false);
+        router.refresh();
       } else {
         const errorMessage = await res.text();
-
-        toast.error(`An error occured ${errorMessage}`, { duration: 6000 });
+        toast.error(`An error occurred ${errorMessage}`, { duration: 6000 });
       }
     } catch (error) {
-      console.error("An error occurred:", error);
-      toast.error("An Unexpected error occured");
+      console.error('An error occurred:', error);
+      toast.error('An Unexpected error occurred');
     }
   }
 
+  const roleKeys = Object.keys(UserRoles) as Array<keyof typeof UserRoles>;
+
   return (
     <DialogWrapper
-      title="Edit User"
+      title='Edit User'
       icon={IoPencil}
       isBtn={false}
       open={open}
@@ -97,17 +139,17 @@ const EditUser = ({ user }: EditUserProps) => {
     >
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(SubmitEditUser)}
-          className="space-y-8"
+          onSubmit={form.handleSubmit(submitEditUser)}
+          className='space-y-8'
         >
           <FormField
             control={form.control}
-            name="phone"
+            name='phone'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
-                  <Input placeholder="Phone" {...field} />
+                  <Input placeholder='Phone' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -116,146 +158,140 @@ const EditUser = ({ user }: EditUserProps) => {
 
           <FormField
             control={form.control}
-            name="department"
+            name='departmentId'
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem className='flex flex-col'>
                 <FormLabel>Department</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          " justify-between",
-                          !field.value && "text-muted-foreground"
-                        )}
+                        variant='outline'
+                        role='combobox'
+                        className={`justify-between ${
+                          !field.value && 'text-muted-foreground'
+                        }`}
                       >
                         {field.value
-                          ? orgDepartments.find(
-                              (dpt) => dpt.label === field.value
-                            )?.label
-                          : "Select a department"}
-                        <PiCaretUpDownBold className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          ? departments.find((dpt) => dpt.id === field.value)
+                              ?.label
+                          : 'Select a department'}
+                        <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
+                  <PopoverContent className='w-[200px] p-0 max-h-60 overflow-y-auto'>
                     <Command>
-                      <CommandInput placeholder="Search a department..." />
-                      <CommandEmpty>No department found.</CommandEmpty>
+                      <CommandInput placeholder='Search Department...' />
+                      <CommandEmpty>No Department found.</CommandEmpty>
                       <CommandGroup>
-                        {orgDepartments.map((dpt) => (
+                        {departments.map((dpt) => (
                           <CommandItem
                             value={dpt.label}
                             key={dpt.id}
-                            onSelect={() => {
-                              form.setValue("department", dpt.label);
-                            }}
+                            onSelect={() =>
+                              form.setValue('departmentId', dpt.id)
+                            }
                           >
-                            <BsCheckLg
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                dpt.label === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
                             {dpt.label}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Title</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          " justify-between",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value
-                          ? orgTitles.find(
-                              (title) => title.label === field.value
-                            )?.label
-                          : "Select a title"}
-                        <PiCaretUpDownBold className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search a title..." />
-                      <CommandEmpty>No title found.</CommandEmpty>
-                      <CommandGroup>
-                        {orgTitles.map((title) => (
-                          <CommandItem
-                            value={title.label}
-                            key={title.id}
-                            onSelect={() => {
-                              form.setValue("title", title.label);
-                            }}
-                          >
                             <BsCheckLg
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                title.label === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
+                              className={`ml-auto h-4 w-4 ${
+                                dpt.id === field.value
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
+                              }`}
                             />
-                            {title.label}
                           </CommandItem>
                         ))}
                       </CommandGroup>
                     </Command>
                   </PopoverContent>
                 </Popover>
+                <FormMessage />
               </FormItem>
             )}
           />
 
           <FormField
             control={form.control}
-            name="role"
+            name='titleId'
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem className='flex flex-col'>
+                <FormLabel>Title</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant='outline'
+                        role='combobox'
+                        className={`justify-between ${
+                          !field.value && 'text-muted-foreground'
+                        }`}
+                      >
+                        {field.value
+                          ? titles.find((title) => title.id === field.value)
+                              ?.titlename
+                          : 'Select a title'}
+                        <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className='w-[200px] p-0 max-h-60 overflow-y-auto'>
+                    <Command>
+                      <CommandInput placeholder='Search Title...' />
+                      <CommandEmpty>No Title found.</CommandEmpty>
+                      <CommandGroup>
+                        {titles.map((title) => (
+                          <CommandItem
+                            value={title.titlename}
+                            key={title.id}
+                            onSelect={() => form.setValue('titleId', title.id)}
+                          >
+                            {title.titlename}
+                            <BsCheckLg
+                              className={`ml-auto h-4 w-4 ${
+                                title.id === field.value
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
+                              }`}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='role'
+            render={({ field }) => (
+              <FormItem className='flex flex-col'>
                 <FormLabel>Role</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
-                        variant="outline"
-                        role="combobox"
+                        variant='outline'
+                        role='combobox'
                         className={cn(
-                          " justify-between",
-                          !field.value && "text-muted-foreground"
+                          ' justify-between',
+                          !field.value && 'text-muted-foreground'
                         )}
                       >
                         {field.value
                           ? UserRoles.find((role) => role === field.value)
-                          : "Select a role"}
-                        <PiCaretUpDownBold className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          : 'Select a role'}
+                        <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
+                  <PopoverContent className='w-[200px] p-0'>
                     <Command>
-                      <CommandInput placeholder="Search a role..." />
+                      <CommandInput placeholder='Search a role...' />
                       <CommandEmpty>No role found.</CommandEmpty>
                       <CommandGroup>
                         {UserRoles.map((role, i) => (
@@ -263,15 +299,15 @@ const EditUser = ({ user }: EditUserProps) => {
                             value={role}
                             key={i}
                             onSelect={() => {
-                              form.setValue("role", role);
+                              form.setValue('role', role);
                             }}
                           >
                             <BsCheckLg
                               className={cn(
-                                "mr-2 h-4 w-4",
+                                'mr-2 h-4 w-4',
                                 role === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
                               )}
                             />
                             {role}
@@ -285,8 +321,9 @@ const EditUser = ({ user }: EditUserProps) => {
               </FormItem>
             )}
           />
-
-          <Button type="submit">Submit</Button>
+          <div className='flex justify-end'>
+            <Button type='submit'>Save Changes</Button>
+          </div>
         </form>
       </Form>
     </DialogWrapper>
@@ -294,3 +331,987 @@ const EditUser = ({ user }: EditUserProps) => {
 };
 
 export default EditUser;
+
+// 'use client';
+
+// import { useForm } from 'react-hook-form';
+// import * as z from 'zod';
+// import { zodResolver } from '@hookform/resolvers/zod';
+// import DialogWrapper from '@/components/Common/DialogWrapper';
+// import { UserRoles } from '@/lib/dummy-data';
+// import toast from 'react-hot-toast';
+// import { IoPencil } from 'react-icons/io5';
+// import {
+//   Form,
+//   FormControl,
+//   FormField,
+//   FormItem,
+//   FormLabel,
+//   FormMessage,
+// } from '@/components/ui/form';
+// import {
+//   Command,
+//   CommandEmpty,
+//   CommandGroup,
+//   CommandInput,
+//   CommandItem,
+// } from '@/components/ui/command';
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverTrigger,
+// } from '@/components/ui/popover';
+// import { Button } from '@/components/ui/button';
+// import { Input } from '@/components/ui/input';
+// import { PiCaretUpDownBold } from 'react-icons/pi';
+// import { BsCheckLg } from 'react-icons/bs';
+// import { useState, useEffect } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { User } from '@prisma/client';
+
+// type EditUserProps = {
+//   user: User;
+//   onUpdate: (updatedUser: User) => void;
+// };
+
+// const EditUser = ({ user, onUpdate }: EditUserProps) => {
+//   const [open, setOpen] = useState(false);
+//   const [departments, setDepartments] = useState<
+//     { id: string; label: string }[]
+//   >([]);
+//   const [titles, setTitles] = useState<{ id: string; titlename: string }[]>([]);
+//   const router = useRouter();
+
+//   const formSchema = z.object({
+//     id: z.string(),
+//     phone: z.string().max(50),
+//     departmentId: z.string(),
+//     titleId: z.string(),
+//     role: z.string(),
+//   });
+
+//   const form = useForm<z.infer<typeof formSchema>>({
+//     resolver: zodResolver(formSchema),
+//     defaultValues: {
+//       id: user.id,
+//       phone: user.phone as string,
+//       departmentId: user.departmentId as string,
+//       titleId: user.titleId as string,
+//       role: user.role,
+//     },
+//   });
+
+//   useEffect(() => {
+//     const fetchDepartments = async () => {
+//       try {
+//         const res = await fetch('/api/department');
+//         if (!res.ok) {
+//           throw new Error('Failed to fetch departments');
+//         }
+//         const data = await res.json();
+//         setDepartments(data);
+//       } catch (error) {
+//         console.error('Error fetching departments:', error);
+//         toast.error('Error fetching departments');
+//       }
+//     };
+
+//     const fetchTitles = async () => {
+//       try {
+//         const res = await fetch('/api/orgn-title');
+//         if (!res.ok) {
+//           throw new Error('Failed to fetch titles');
+//         }
+//         const data = await res.json();
+//         setTitles(data);
+//       } catch (error) {
+//         console.error('Error fetching titles:', error);
+//         toast.error('Error fetching titles');
+//       }
+//     };
+
+//     fetchDepartments();
+//     fetchTitles();
+//   }, []);
+
+//   async function submitEditUser(values: z.infer<typeof formSchema>) {
+//     try {
+//       const res = await fetch(`/api/user/${values.id}`, {
+//         method: 'PATCH',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(values),
+//       });
+
+//       if (res.ok) {
+//         const data = await res.json();
+//         toast.success('User Edited Successfully', { duration: 8000 });
+//         onUpdate(data.user);
+//         setOpen(false);
+//         router.refresh();
+//       } else {
+//         const errorMessage = await res.text();
+//         toast.error(`An error occurred ${errorMessage}`, { duration: 6000 });
+//       }
+//     } catch (error) {
+//       console.error('An error occurred:', error);
+//       toast.error('An Unexpected error occurred');
+//     }
+//   }
+
+//   const roleKeys = Object.keys(UserRoles) as Array<keyof typeof UserRoles>;
+
+//   return (
+//     <DialogWrapper
+//       title='Edit User'
+//       icon={IoPencil}
+//       isBtn={false}
+//       open={open}
+//       setOpen={() => setOpen(!open)}
+//     >
+//       <Form {...form}>
+//         <form
+//           onSubmit={form.handleSubmit(submitEditUser)}
+//           className='space-y-8'
+//         >
+//           <FormField
+//             control={form.control}
+//             name='phone'
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormLabel>Phone</FormLabel>
+//                 <FormControl>
+//                   <Input placeholder='Phone' {...field} />
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+
+//           <FormField
+//             control={form.control}
+//             name='departmentId'
+//             render={({ field }) => (
+//               <FormItem className='flex flex-col'>
+//                 <FormLabel>Department</FormLabel>
+//                 <Popover>
+//                   <PopoverTrigger asChild>
+//                     <FormControl>
+//                       <Button
+//                         variant='outline'
+//                         role='combobox'
+//                         className={`justify-between ${
+//                           !field.value && 'text-muted-foreground'
+//                         }`}
+//                       >
+//                         {field.value
+//                           ? departments.find((dpt) => dpt.id === field.value)
+//                               ?.label
+//                           : 'Select a department'}
+//                         <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+//                       </Button>
+//                     </FormControl>
+//                   </PopoverTrigger>
+//                   <PopoverContent className='w-[200px] p-0 max-h-60 overflow-y-auto'>
+//                     <Command>
+//                       <CommandInput placeholder='Search a department...' />
+//                       <CommandEmpty>No department found.</CommandEmpty>
+//                       <CommandGroup>
+//                         {departments.map((dpt) => (
+//                           <CommandItem
+//                             value={dpt.id}
+//                             key={dpt.id}
+//                             onSelect={() => {
+//                               form.setValue('departmentId', dpt.id);
+//                             }}
+//                           >
+//                             <BsCheckLg
+//                               className={`mr-2 h-4 w-4 ${
+//                                 dpt.id === field.value
+//                                   ? 'opacity-100'
+//                                   : 'opacity-0'
+//                               }`}
+//                             />
+//                             {dpt.label}
+//                           </CommandItem>
+//                         ))}
+//                       </CommandGroup>
+//                     </Command>
+//                   </PopoverContent>
+//                 </Popover>
+//               </FormItem>
+//             )}
+//           />
+
+//           <FormField
+//             control={form.control}
+//             name='titleId'
+//             render={({ field }) => (
+//               <FormItem className='flex flex-col'>
+//                 <FormLabel>Title</FormLabel>
+//                 <Popover>
+//                   <PopoverTrigger asChild>
+//                     <FormControl>
+//                       <Button
+//                         variant='outline'
+//                         role='combobox'
+//                         className={`justify-between ${
+//                           !field.value && 'text-muted-foreground'
+//                         }`}
+//                       >
+//                         {field.value
+//                           ? titles.find((title) => title.id === field.value)
+//                               ?.titlename
+//                           : 'Select a title'}
+//                         <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+//                       </Button>
+//                     </FormControl>
+//                   </PopoverTrigger>
+//                   <PopoverContent className='w-[200px] p-0 max-h-60 overflow-y-auto'>
+//                     <Command>
+//                       <CommandInput placeholder='Search a title...' />
+//                       <CommandEmpty>No title found.</CommandEmpty>
+//                       <CommandGroup>
+//                         {titles.map((title) => (
+//                           <CommandItem
+//                             value={title.id}
+//                             key={title.id}
+//                             onSelect={() => {
+//                               form.setValue('titleId', title.id);
+//                             }}
+//                           >
+//                             <BsCheckLg
+//                               className={`mr-2 h-4 w-4 ${
+//                                 title.id === field.value
+//                                   ? 'opacity-100'
+//                                   : 'opacity-0'
+//                               }`}
+//                             />
+//                             {title.titlename}
+//                           </CommandItem>
+//                         ))}
+//                       </CommandGroup>
+//                     </Command>
+//                   </PopoverContent>
+//                 </Popover>
+//               </FormItem>
+//             )}
+//           />
+
+//           <FormField
+//             control={form.control}
+//             name='role'
+//             render={({ field }) => (
+//               <FormItem className='flex flex-col'>
+//                 <FormLabel>Role</FormLabel>
+//                 <Popover>
+//                   <PopoverTrigger asChild>
+//                     <FormControl>
+//                       <Button
+//                         variant='outline'
+//                         role='combobox'
+//                         className={`justify-between ${
+//                           !field.value && 'text-muted-foreground'
+//                         }`}
+//                       >
+//                         {field.value || 'Select a role'}
+//                         <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+//                       </Button>
+//                     </FormControl>
+//                   </PopoverTrigger>
+//                   <PopoverContent className='w-[200px] p-0 max-h-60 overflow-y-auto'>
+//                     <Command>
+//                       <CommandInput placeholder='Search a role...' />
+//                       <CommandEmpty>No role found.</CommandEmpty>
+//                       <CommandGroup>
+//                         {roleKeys.map((role) => (
+//                           <CommandItem
+//                             value={role as string}
+//                             key={role as string}
+//                             onSelect={() => {
+//                               form.setValue('role', role as string);
+//                             }}
+//                           >
+//                             <BsCheckLg
+//                               className={`mr-2 h-4 w-4 ${
+//                                 role === field.value
+//                                   ? 'opacity-100'
+//                                   : 'opacity-0'
+//                               }`}
+//                             />
+//                             {role as string}
+//                           </CommandItem>
+//                         ))}
+//                       </CommandGroup>
+//                     </Command>
+//                   </PopoverContent>
+//                 </Popover>
+//               </FormItem>
+//             )}
+//           />
+
+//           <Button type='submit'>Save Changes</Button>
+//         </form>
+//       </Form>
+//     </DialogWrapper>
+//   );
+// };
+
+// export default EditUser;
+// 'use client';
+
+// import { useForm } from 'react-hook-form';
+// import * as z from 'zod';
+// import { zodResolver } from '@hookform/resolvers/zod';
+// import DialogWrapper from '@/components/Common/DialogWrapper';
+// import { UserRoles } from '@/lib/dummy-data';
+// import toast from 'react-hot-toast';
+// import { IoPencil } from 'react-icons/io5';
+// import {
+//   Form,
+//   FormControl,
+//   FormField,
+//   FormItem,
+//   FormLabel,
+//   FormMessage,
+// } from '@/components/ui/form';
+// import {
+//   Command,
+//   CommandEmpty,
+//   CommandGroup,
+//   CommandInput,
+//   CommandItem,
+// } from '@/components/ui/command';
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverTrigger,
+// } from '@/components/ui/popover';
+// import { Button } from '@/components/ui/button';
+// import { Input } from '@/components/ui/input';
+// import { PiCaretUpDownBold } from 'react-icons/pi';
+// import { BsCheckLg } from 'react-icons/bs';
+// import { useState, useEffect } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { User } from '@prisma/client';
+
+// type EditUserProps = {
+//   user: User;
+//   onUpdate: (updatedUser: User) => void;
+// };
+
+// const EditUser = ({ user, onUpdate }: EditUserProps) => {
+//   const [open, setOpen] = useState(false);
+//   const [departments, setDepartments] = useState<
+//     { id: string; label: string }[]
+//   >([]);
+//   const [titles, setTitles] = useState<{ id: string; titlename: string }[]>([]);
+//   const router = useRouter();
+
+//   const formSchema = z.object({
+//     id: z.string(),
+//     phone: z.string().max(50),
+//     departmentId: z.string(),
+//     titleId: z.string(),
+//     role: z.string(),
+//   });
+
+//   const form = useForm<z.infer<typeof formSchema>>({
+//     resolver: zodResolver(formSchema),
+//     defaultValues: {
+//       id: user.id,
+//       phone: user.phone as string,
+//       departmentId: user.departmentId as string,
+//       titleId: user.titleId as string,
+//       role: user.role,
+//     },
+//   });
+
+//   useEffect(() => {
+//     const fetchDepartments = async () => {
+//       try {
+//         const res = await fetch('/api/department');
+//         if (!res.ok) {
+//           throw new Error('Failed to fetch departments');
+//         }
+//         const data = await res.json();
+//         setDepartments(data);
+//       } catch (error) {
+//         console.error('Error fetching departments:', error);
+//         toast.error('Error fetching departments');
+//       }
+//     };
+
+//     const fetchTitles = async () => {
+//       try {
+//         const res = await fetch('/api/orgn-title');
+//         if (!res.ok) {
+//           throw new Error('Failed to fetch titles');
+//         }
+//         const data = await res.json();
+//         setTitles(data);
+//       } catch (error) {
+//         console.error('Error fetching titles:', error);
+//         toast.error('Error fetching titles');
+//       }
+//     };
+
+//     fetchDepartments();
+//     fetchTitles();
+//   }, []);
+
+//   async function submitEditUser(values: z.infer<typeof formSchema>) {
+//     try {
+//       const res = await fetch(`/api/user/${values.id}`, {
+//         method: 'PATCH',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(values),
+//       });
+
+//       if (res.ok) {
+//         const data = await res.json();
+//         toast.success('User Edited Successfully', { duration: 8000 });
+//         onUpdate(data.user);
+//         setOpen(false);
+//         router.refresh();
+//       } else {
+//         const errorMessage = await res.text();
+//         toast.error(`An error occurred ${errorMessage}`, { duration: 6000 });
+//       }
+//     } catch (error) {
+//       console.error('An error occurred:', error);
+//       toast.error('An Unexpected error occurred');
+//     }
+//   }
+
+//   const roleKeys = Object.keys(UserRoles) as Array<keyof typeof UserRoles>;
+
+//   return (
+//     <DialogWrapper
+//       title='Edit User'
+//       icon={IoPencil}
+//       isBtn={false}
+//       open={open}
+//       setOpen={() => setOpen(!open)}
+//     >
+//       <Form {...form}>
+//         <form
+//           onSubmit={form.handleSubmit(submitEditUser)}
+//           className='space-y-8'
+//         >
+//           <FormField
+//             control={form.control}
+//             name='phone'
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormLabel>Phone</FormLabel>
+//                 <FormControl>
+//                   <Input placeholder='Phone' {...field} />
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+
+//           <FormField
+//             control={form.control}
+//             name='departmentId'
+//             render={({ field }) => (
+//               <FormItem className='flex flex-col'>
+//                 <FormLabel>Department</FormLabel>
+//                 <Popover>
+//                   <PopoverTrigger asChild>
+//                     <FormControl>
+//                       <Button
+//                         variant='outline'
+//                         role='combobox'
+//                         className={`justify-between ${
+//                           !field.value && 'text-muted-foreground'
+//                         }`}
+//                       >
+//                         {field.value
+//                           ? departments.find((dpt) => dpt.id === field.value)
+//                               ?.label
+//                           : 'Select a department'}
+//                         <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+//                       </Button>
+//                     </FormControl>
+//                   </PopoverTrigger>
+//                   <PopoverContent className='p-0'>
+//                     <Command>
+//                       <CommandInput placeholder='Search Department...' />
+//                       <CommandEmpty>No Department found.</CommandEmpty>
+//                       <CommandGroup>
+//                         {departments.map((dpt) => (
+//                           <CommandItem
+//                             value={dpt.label}
+//                             key={dpt.id}
+//                             onSelect={() =>
+//                               form.setValue('departmentId', dpt.id)
+//                             }
+//                           >
+//                             {dpt.label}
+//                             <BsCheckLg
+//                               className={`ml-auto h-4 w-4 ${
+//                                 dpt.id === field.value
+//                                   ? 'opacity-100'
+//                                   : 'opacity-0'
+//                               }`}
+//                             />
+//                           </CommandItem>
+//                         ))}
+//                       </CommandGroup>
+//                     </Command>
+//                   </PopoverContent>
+//                 </Popover>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+
+//           <FormField
+//             control={form.control}
+//             name='titleId'
+//             render={({ field }) => (
+//               <FormItem className='flex flex-col'>
+//                 <FormLabel>Title</FormLabel>
+//                 <Popover>
+//                   <PopoverTrigger asChild>
+//                     <FormControl>
+//                       <Button
+//                         variant='outline'
+//                         role='combobox'
+//                         className={`justify-between ${
+//                           !field.value && 'text-muted-foreground'
+//                         }`}
+//                       >
+//                         {field.value
+//                           ? titles.find((title) => title.id === field.value)
+//                               ?.titlename
+//                           : 'Select a title'}
+//                         <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+//                       </Button>
+//                     </FormControl>
+//                   </PopoverTrigger>
+//                   <PopoverContent className='p-0'>
+//                     <Command>
+//                       <CommandInput placeholder='Search Title...' />
+//                       <CommandEmpty>No Title found.</CommandEmpty>
+//                       <CommandGroup>
+//                         {titles.map((title) => (
+//                           <CommandItem
+//                             value={title.titlename}
+//                             key={title.id}
+//                             onSelect={() => form.setValue('titleId', title.id)}
+//                           >
+//                             {title.titlename}
+//                             <BsCheckLg
+//                               className={`ml-auto h-4 w-4 ${
+//                                 title.id === field.value
+//                                   ? 'opacity-100'
+//                                   : 'opacity-0'
+//                               }`}
+//                             />
+//                           </CommandItem>
+//                         ))}
+//                       </CommandGroup>
+//                     </Command>
+//                   </PopoverContent>
+//                 </Popover>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+
+//           <FormField
+//             control={form.control}
+//             name='role'
+//             render={({ field }) => (
+//               <FormItem className='flex flex-col'>
+//                 <FormLabel>Role</FormLabel>
+//                 <Popover>
+//                   <PopoverTrigger asChild>
+//                     <FormControl>
+//                       <Button
+//                         variant='outline'
+//                         role='combobox'
+//                         className={`justify-between ${
+//                           !field.value && 'text-muted-foreground'
+//                         }`}
+//                       >
+//                         {field.value ? UserRoles[field.value] : 'Select a role'}
+//                         <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+//                       </Button>
+//                     </FormControl>
+//                   </PopoverTrigger>
+//                   <PopoverContent className='p-0'>
+//                     <Command>
+//                       <CommandInput placeholder='Search role...' />
+//                       <CommandEmpty>No role found.</CommandEmpty>
+//                       <CommandGroup>
+//                         {roleKeys.map((key) => (
+//                           <CommandItem
+//                             value={UserRoles[key]}
+//                             key={key}
+//                             onSelect={() => form.setValue('role', key)}
+//                           >
+//                             {UserRoles[key]}
+//                             <BsCheckLg
+//                               className={`ml-auto h-4 w-4 ${
+//                                 key === field.value
+//                                   ? 'opacity-100'
+//                                   : 'opacity-0'
+//                               }`}
+//                             />
+//                           </CommandItem>
+//                         ))}
+//                       </CommandGroup>
+//                     </Command>
+//                   </PopoverContent>
+//                 </Popover>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+
+//           <div className='flex justify-end'>
+//             <Button type='submit'>Save Changes</Button>
+//           </div>
+//         </form>
+//       </Form>
+//     </DialogWrapper>
+//   );
+// };
+
+// export default EditUser;
+
+// 'use client';
+
+// import { useForm } from 'react-hook-form';
+// import * as z from 'zod';
+// import { zodResolver } from '@hookform/resolvers/zod';
+// import DialogWrapper from '@/components/Common/DialogWrapper';
+// import { UserRoles } from '@/lib/dummy-data';
+// import toast from 'react-hot-toast';
+// import { IoPencil } from 'react-icons/io5';
+// import {
+//   Form,
+//   FormControl,
+//   FormField,
+//   FormItem,
+//   FormLabel,
+//   FormMessage,
+// } from '@/components/ui/form';
+// import {
+//   Command,
+//   CommandEmpty,
+//   CommandGroup,
+//   CommandInput,
+//   CommandItem,
+// } from '@/components/ui/command';
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverTrigger,
+// } from '@/components/ui/popover';
+// import { Button } from '@/components/ui/button';
+// import { Input } from '@/components/ui/input';
+// import { PiCaretUpDownBold } from 'react-icons/pi';
+// import { BsCheckLg } from 'react-icons/bs';
+// import { useState, useEffect } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { User } from '@prisma/client';
+
+// type EditUserProps = {
+//   user: User;
+//   onUpdate: (updatedUser: User) => void;
+// };
+
+// const EditUser = ({ user, onUpdate }: EditUserProps) => {
+//   const [open, setOpen] = useState(false);
+//   const [departments, setDepartments] = useState<
+//     { id: string; label: string }[]
+//   >([]);
+//   const [titles, setTitles] = useState<{ id: string; titlename: string }[]>([]);
+//   const router = useRouter();
+
+//   const formSchema = z.object({
+//     id: z.string(),
+//     phone: z.string().max(50),
+//     departmentId: z.string(),
+//     titleId: z.string(),
+//     role: z.string(),
+//   });
+
+//   const form = useForm<z.infer<typeof formSchema>>({
+//     resolver: zodResolver(formSchema),
+//     defaultValues: {
+//       id: user.id,
+//       phone: user.phone as string,
+//       departmentId: user.departmentId as string,
+//       titleId: user.titleId as string,
+//       role: user.role,
+//     },
+//   });
+
+//   useEffect(() => {
+//     const fetchDepartments = async () => {
+//       try {
+//         const res = await fetch('/api/department');
+//         if (!res.ok) {
+//           throw new Error('Failed to fetch departments');
+//         }
+//         const data = await res.json();
+//         setDepartments(data);
+//       } catch (error) {
+//         console.error('Error fetching departments:', error);
+//         toast.error('Error fetching departments');
+//       }
+//     };
+
+//     const fetchTitles = async () => {
+//       try {
+//         const res = await fetch('/api/orgn-title');
+//         if (!res.ok) {
+//           throw new Error('Failed to fetch titles');
+//         }
+//         const data = await res.json();
+//         setTitles(data);
+//       } catch (error) {
+//         console.error('Error fetching titles:', error);
+//         toast.error('Error fetching titles');
+//       }
+//     };
+
+//     fetchDepartments();
+//     fetchTitles();
+//   }, []);
+
+//   async function submitEditUser(values: z.infer<typeof formSchema>) {
+//     try {
+//       const res = await fetch(`/api/user/${values.id}`, {
+//         method: 'PATCH',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(values),
+//       });
+
+//       if (res.ok) {
+//         const data = await res.json();
+//         toast.success('User Edited Successfully', { duration: 8000 });
+//         onUpdate(data.user);
+//         setOpen(false);
+//         router.refresh();
+//       } else {
+//         const errorMessage = await res.text();
+//         toast.error(`An error occurred ${errorMessage}`, { duration: 6000 });
+//       }
+//     } catch (error) {
+//       console.error('An error occurred:', error);
+//       toast.error('An Unexpected error occurred');
+//     }
+//   }
+
+//   const roleKeys = Object.keys(UserRoles) as Array<keyof typeof UserRoles>;
+
+//   return (
+//     <DialogWrapper
+//       title='Edit User'
+//       icon={IoPencil}
+//       isBtn={false}
+//       open={open}
+//       setOpen={() => setOpen(!open)}
+//     >
+//       <Form {...form}>
+//         <form
+//           onSubmit={form.handleSubmit(submitEditUser)}
+//           className='space-y-8'
+//         >
+//           <FormField
+//             control={form.control}
+//             name='phone'
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormLabel>Phone</FormLabel>
+//                 <FormControl>
+//                   <Input placeholder='Phone' {...field} />
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+
+//           <FormField
+//             control={form.control}
+//             name='departmentId'
+//             render={({ field }) => (
+//               <FormItem className='flex flex-col'>
+//                 <FormLabel>Department</FormLabel>
+//                 <Popover>
+//                   <PopoverTrigger asChild>
+//                     <FormControl>
+//                       <Button
+//                         variant='outline'
+//                         role='combobox'
+//                         className={`justify-between ${
+//                           !field.value && 'text-muted-foreground'
+//                         }`}
+//                       >
+//                         {field.value
+//                           ? departments.find((dpt) => dpt.id === field.value)
+//                               ?.label
+//                           : 'Select a department'}
+//                         <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+//                       </Button>
+//                     </FormControl>
+//                   </PopoverTrigger>
+//                   <PopoverContent className='w-[200px] p-0 max-h-60 overflow-y-auto'>
+//                     <Command>
+//                       <CommandInput placeholder='Search a department...' />
+//                       <CommandEmpty>No department found.</CommandEmpty>
+//                       <CommandGroup>
+//                         {departments.map((dpt) => (
+//                           <CommandItem
+//                             value={dpt.id}
+//                             key={dpt.id}
+//                             onSelect={() => {
+//                               form.setValue('departmentId', dpt.id);
+//                             }}
+//                           >
+//                             <BsCheckLg
+//                               className={`mr-2 h-4 w-4 ${
+//                                 dpt.id === field.value
+//                                   ? 'opacity-100'
+//                                   : 'opacity-0'
+//                               }`}
+//                             />
+//                             {dpt.label}
+//                           </CommandItem>
+//                         ))}
+//                       </CommandGroup>
+//                     </Command>
+//                   </PopoverContent>
+//                 </Popover>
+//               </FormItem>
+//             )}
+//           />
+
+//           <FormField
+//             control={form.control}
+//             name='titleId'
+//             render={({ field }) => (
+//               <FormItem className='flex flex-col'>
+//                 <FormLabel>Title</FormLabel>
+//                 <Popover>
+//                   <PopoverTrigger asChild>
+//                     <FormControl>
+//                       <Button
+//                         variant='outline'
+//                         role='combobox'
+//                         className={`justify-between ${
+//                           !field.value && 'text-muted-foreground'
+//                         }`}
+//                       >
+//                         {field.value
+//                           ? titles.find((title) => title.id === field.value)
+//                               ?.titlename
+//                           : 'Select a title'}
+//                         <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+//                       </Button>
+//                     </FormControl>
+//                   </PopoverTrigger>
+//                   <PopoverContent className='w-[200px] p-0 max-h-60 overflow-y-auto'>
+//                     <Command>
+//                       <CommandInput placeholder='Search a title...' />
+//                       <CommandEmpty>No title found.</CommandEmpty>
+//                       <CommandGroup>
+//                         {titles.map((title) => (
+//                           <CommandItem
+//                             value={title.id}
+//                             key={title.id}
+//                             onSelect={() => {
+//                               form.setValue('titleId', title.id);
+//                             }}
+//                           >
+//                             <BsCheckLg
+//                               className={`mr-2 h-4 w-4 ${
+//                                 title.id === field.value
+//                                   ? 'opacity-100'
+//                                   : 'opacity-0'
+//                               }`}
+//                             />
+//                             {title.titlename}
+//                           </CommandItem>
+//                         ))}
+//                       </CommandGroup>
+//                     </Command>
+//                   </PopoverContent>
+//                 </Popover>
+//               </FormItem>
+//             )}
+//           />
+
+//           <FormField
+//             control={form.control}
+//             name='role'
+//             render={({ field }) => (
+//               <FormItem className='flex flex-col'>
+//                 <FormLabel>Role</FormLabel>
+//                 <Popover>
+//                   <PopoverTrigger asChild>
+//                     <FormControl>
+//                       <Button
+//                         variant='outline'
+//                         role='combobox'
+//                         className={`justify-between ${
+//                           !field.value && 'text-muted-foreground'
+//                         }`}
+//                       >
+//                         {field.value || 'Select a role'}
+//                         <PiCaretUpDownBold className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+//                       </Button>
+//                     </FormControl>
+//                   </PopoverTrigger>
+//                   <PopoverContent className='w-[200px] p-0 max-h-60 overflow-y-auto'>
+//                     <Command>
+//                       <CommandInput placeholder='Search a role...' />
+//                       <CommandEmpty>No role found.</CommandEmpty>
+//                       <CommandGroup>
+//                         {roleKeys.map((role) => (
+//                           <CommandItem
+//                             value={role as string}
+//                             key={role as string}
+//                             onSelect={() => {
+//                               form.setValue('role', role as string);
+//                             }}
+//                           >
+//                             <BsCheckLg
+//                               className={`mr-2 h-4 w-4 ${
+//                                 role === field.value
+//                                   ? 'opacity-100'
+//                                   : 'opacity-0'
+//                               }`}
+//                             />
+//                             {role as string}
+//                           </CommandItem>
+//                         ))}
+//                       </CommandGroup>
+//                     </Command>
+//                   </PopoverContent>
+//                 </Popover>
+//               </FormItem>
+//             )}
+//           />
+
+//           <Button type='submit'>Save Changes</Button>
+//         </form>
+//       </Form>
+//     </DialogWrapper>
+//   );
+// };
+
+// export default EditUser;

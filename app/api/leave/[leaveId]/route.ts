@@ -1,7 +1,7 @@
-import calculateAndUpdateBalances from "@/lib/calculateBalances";
-import { getCurrentUser } from "@/lib/session";
-import { LeaveStatus } from "@prisma/client";
-import { NextResponse } from "next/server";
+import calculateAndUpdateBalances from '@/lib/calculateBalances';
+import { getCurrentUser } from '@/lib/sessions/session';
+import { LeaveStatus } from '@prisma/client';
+import { NextResponse } from 'next/server';
 
 type EditBody = {
   notes: string;
@@ -11,28 +11,29 @@ type EditBody = {
   type: string;
   year: string;
   email: string;
-  user: string
-  startDate: string
-}
+  user: string;
+  startDate: string;
+};
 
 export async function PATCH(req: Request) {
   const loggedInUser = await getCurrentUser();
-  if (loggedInUser?.role !== "ADMIN" && loggedInUser?.role !== "MODERATOR") {
-    throw new Error("You are not permitted to perfom this action");
+  if (loggedInUser?.role !== 'ADMIN' && loggedInUser?.role !== 'MODERATOR') {
+    throw new Error('You are not permitted to perfom this action');
   }
 
   try {
     const body: EditBody = await req.json();
 
-    const { notes, status, id, days, type, year, email, user, startDate } = body;
+    const { notes, status, id, days, type, year, email, user, startDate } =
+      body;
 
     const updatedAt = new Date().toISOString();
     const moderator = loggedInUser.name;
 
     if (status === LeaveStatus.APPROVED) {
       await calculateAndUpdateBalances(email, year, type, days);
-      const title = `${user} on Leave`
-      const description = `For ${days} days`
+      const title = `${user} on Leave`;
+      const description = `For ${days} days`;
       await prisma.events.create({
         data: {
           startDate,
@@ -46,11 +47,11 @@ export async function PATCH(req: Request) {
       data: { moderatorNote: notes, status, updatedAt, moderator },
     });
 
-    return NextResponse.json({ message: "Success" }, { status: 200 });
+    return NextResponse.json({ message: 'Success' }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'User credits not available for this leave type' },
       { status: 500 }
     );
   }

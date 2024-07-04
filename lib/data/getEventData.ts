@@ -1,5 +1,5 @@
-import { getCurrentUser } from "@/lib/session";
-import prisma from "@/lib/prisma";
+import { getCurrentUser } from '@/lib/sessions/session';
+import prisma from '@/lib/prisma';
 
 export async function getEventsData() {
   const loggedInUser = await getCurrentUser();
@@ -11,7 +11,7 @@ export async function getEventsData() {
 
     return [...eventsData];
   } catch (error) {
-    console.error("Error fetching user info:", error);
-    throw new Error("Error fetching user info");
+    console.error('Error fetching user info:', error);
+    throw new Error('Error fetching user info');
   }
 }

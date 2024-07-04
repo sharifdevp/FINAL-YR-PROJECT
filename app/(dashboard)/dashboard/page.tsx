@@ -1,8 +1,8 @@
-import Container from "@/components/Common/Container"
-import { MonthDateRangePicker } from "./MonthDateRangePicker"
-import { Button } from "@/components/ui/button"
-import StatsCards from "./StatsCards"
-
+import Container from "@/components/Common/Container";
+import { Button } from "@/components/ui/button";
+import Link from 'next/link';
+import { MonthDateRangePicker } from "./MonthDateRangePicker";
+import StatsCards from "./StatsCards";
 
 const Dashboard = () => {
   return (
@@ -11,7 +11,9 @@ const Dashboard = () => {
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
         <div className="flex items-center space-x-2">
           <MonthDateRangePicker />
-          <Button>Download</Button>
+          <Link  href="dashboard/report">
+          <Button>Reports</Button>
+          </Link>
         </div>
       </div>
       <StatsCards />

@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import Providers from "./Provider";
+import type { Metadata } from 'next';
+import './globals.css';
+import Providers from './Provider';
 
 export const metadata: Metadata = {
-  title: "Spana",
-  description: "...",
+  title: 'Hotel Kampala | Golden Tulip',
+  description: '...',
 };
 
 export default function RootLayout({
@@ -13,11 +13,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="">
+    <html lang='en'>
+      <body className=''>
         <Providers
-          attribute="class"
-          defaultTheme="system"
+          attribute='class'
+          defaultTheme='system'
           enableSystem
           disableTransitionOnChange
         >

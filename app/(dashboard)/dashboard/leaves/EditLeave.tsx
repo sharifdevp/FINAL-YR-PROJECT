@@ -1,4 +1,4 @@
-'use client';
+'use client'; // Add this line at the top
 
 import DialogWrapper from '@/components/Common/DialogWrapper';
 import { Button } from '@/components/ui/button';
@@ -43,6 +43,7 @@ type EditLeaveProps = {
   email: string;
   user: string;
   startDate: Date;
+  phoneNumber: string | null;
 };
 
 const EditLeave = ({
@@ -53,6 +54,7 @@ const EditLeave = ({
   email,
   user,
   startDate,
+  phoneNumber,
 }: EditLeaveProps) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -90,12 +92,30 @@ const EditLeave = ({
       });
 
       if (res.ok) {
-        toast.success('Edit Successful', { duration: 4000 });
-        setOpen(false);
-        router.refresh();
+        // Log the phoneNumber and message
+        console.log('PhoneNumber:', phoneNumber);
+        console.log('SMS Payload:', {
+          phoneNumber: phoneNumber,
+          message: `Leave Approval Notice\nStatus: ${values.status}\nNotes: ${values.notes}`,
+        });
+
+        // Send SMS notification
+        const smsResponse = await fetch('/api/send-sms', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            phoneNumber: phoneNumber,
+            message: `Leave Approval Notice\nStatus: ${values.status}\nComment notes: ${values.notes}`,
+          }),
+        });
+        if (!smsResponse.ok) {
+          throw new Error('Failed to send SMS');
+        }
 
         // Send approval email
-        await fetch('/api/emails', {
+        const emailResponse = await fetch('/api/send-email', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -108,13 +128,24 @@ const EditLeave = ({
             notes: values.notes,
           }),
         });
+
+        if (!emailResponse.ok) {
+          throw new Error('Failed to send email');
+        }
+
+        toast.success('Approval Action Successful', {
+          duration: 15000,
+        });
+
+        setOpen(false);
+        router.refresh();
       } else {
         const errorMessage = await res.text();
-        toast.error(`An error occurred: ${errorMessage}`, { duration: 6000 });
+        toast.error(`An error occurred: ${errorMessage}`, { duration: 15000 });
       }
     } catch (error) {
       console.error('An error occurred:', error);
-      toast.error('An Unexpected error occurred');
+      toast.error('An unexpected error occurred');
     }
   }
 
@@ -141,7 +172,7 @@ const EditLeave = ({
                         variant='outline'
                         role='combobox'
                         className={cn(
-                          ' justify-between',
+                          'justify-between',
                           !field.value && 'text-muted-foreground'
                         )}
                       >

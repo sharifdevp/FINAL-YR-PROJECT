@@ -1,18 +1,18 @@
-import { getCurrentUser } from "@/lib/session";
-import { Role } from "@prisma/client";
+import { getCurrentUser } from '@/lib/sessions/session';
+import { Role } from '@prisma/client';
 
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
 interface EditBody {
   [key: string]: number | string;
   id: string;
 }
-const allowedRoles = ["ADMIN", "MODERATOR"];
+const allowedRoles = ['ADMIN', 'MODERATOR'];
 
 export async function PATCH(req: Request) {
   const loggedInUser = await getCurrentUser();
   if (!allowedRoles.includes(loggedInUser?.role as Role)) {
-    throw new Error("You are not permitted to perform this action");
+    throw new Error('You are not permitted to perform this action');
   }
 
   try {
@@ -24,11 +24,11 @@ export async function PATCH(req: Request) {
       where: { id },
       data,
     });
-    return NextResponse.json({ message: "Success" }, { status: 200 });
+    return NextResponse.json({ message: 'Success' }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
