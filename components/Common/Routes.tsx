@@ -49,7 +49,7 @@ export const AdminRoutes = [
     // icon: HiOutlineIdentification,
     icon: FaUserTag,
   },
-  { title: "Report", url: "/dashboard/report", icon: TbListCheck },
+  // { title: "Report", url: "/dashboard/report", icon: TbListCheck },
 ];
 
 export const UserRoutes = [
