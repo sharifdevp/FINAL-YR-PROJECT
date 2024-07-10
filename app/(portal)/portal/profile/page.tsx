@@ -3,6 +3,7 @@ import TableWrapper from '@/components/Common/TableWrapper';
 import ProfileTable from './ProfileTable';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/sessions/session';
+import { UserDetails } from './types';
 
 async function fetchUserDetails(email: string) {
   const user = await prisma.user.findUnique({
@@ -31,7 +32,7 @@ async function fetchUserDetails(email: string) {
     departmentId: user.department?.id || null, // Check for null
     titleId: user.title?.id || null, // Check for null
     manager: user.manager || null,
-    onLeave: false, // Example: Replace with actual logic to determine if user is on leave
+    onLeave: user.onLeave, // Example: Replace with actual logic to determine if user is on leave
     createdAt: user.createdAt, // Assuming user.createdAt is of type Date
   };
 }
@@ -86,7 +87,7 @@ export default async function RegularUsersPage() {
 //           title: currentUser.titleName || ' ', // Default value if title is null
 //           department: currentUser.departmentName || '  ', // Default value if department is null
 //         },
-//       ] 
+//       ]
 //     : [];
 
 //   return (
