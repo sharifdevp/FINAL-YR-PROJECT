@@ -1,4 +1,6 @@
 // ProfileTable.tsx
+
+'use client';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
