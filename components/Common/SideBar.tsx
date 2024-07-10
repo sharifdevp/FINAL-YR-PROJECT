@@ -24,7 +24,7 @@ const SideBar = ({ user }: SideBarProps) => {
 
   return (
     <div className='hidden fixed  inset-y-0 left-0 sm:block w-[5rem] bg-white rounded-lg overflow-hidden dark:bg-black dark:border-r'>
-      <div className='flex flex-col items-center justify-between h-full'>
+      <div className='flex flex-col items-center justify-between h-full overflow-auto'>
         {/* TOP PART  */}
         <div>
           <div className='my-8 flex justify-center items-center bg-blue-600 p-0.4 w-12 h-12 rounded-full'>

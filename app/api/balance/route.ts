@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
       paternity,
       emergency,
       compensation,
+      unpaid,
       year,
       email,
       name,
@@ -62,6 +63,7 @@ export async function POST(req: NextRequest) {
         paternityCredit: paternity,
         emergencyCredit: emergency,
         compensationCredit: compensation,
+        unpaidCredit: unpaid,
       },
     });
 

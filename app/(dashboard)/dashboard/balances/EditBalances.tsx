@@ -42,7 +42,9 @@ const EditBalances = ({ balance }: Props) => {
     compensationCredit: balance.compensationCredit as number,
     compensationUsed: balance.compensationUsed as number,
     compensationAvailable: balance.compensationAvailable as number,
+    unpaidCredit: balance.unpaidCredit as number,
     unpaidUsed: balance.unpaidUsed as number,
+    unpaidAvailable: balance.unpaidAvailable as number,
   };
 
   const reducer = (state: State, action: Action): State => {
