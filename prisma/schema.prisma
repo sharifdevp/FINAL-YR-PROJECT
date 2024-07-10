@@ -136,7 +136,9 @@ model Balances {
   compensationCredit Int?   @default(0)
   compensationUsed   Int?   @default(0)
   compensationAvailable Int? @default(0)
-  unpaidUsed         Int?   @default(0)
+  unpaidCredit          Int?   @default(0)
+  unpaidUsed            Int?   @default(0)
+  unpaidAvailable       Int?   @default(0)
   name               String
   email              String
   user               User   @relation(fields: [email], references: [email], onDelete: Cascade)
@@ -164,3 +166,9 @@ model OrgnTitle {
   description String
   user        User[]
 }
+
+
+
+
+
+

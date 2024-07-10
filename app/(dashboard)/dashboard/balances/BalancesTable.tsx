@@ -44,7 +44,7 @@ const BalancesTable = ({ balances }: BalanceProps) => {
     { title: 'PATERNITY', values: ['Credit', 'Used', 'Available'] },
     { title: 'EMERGENCY', values: ['Credit', 'Used', 'Available'] },
     { title: 'COMPENSATION', values: ['Credit', 'Used', 'Available'] },
-    { title: 'UNPAID', values: ['Used'] },
+    { title: 'UNPAID', values: ['Credit', 'Used', 'Available'] },
   ];
 
   const renderTableCells = (bal: Balances) => {
@@ -108,3 +108,4 @@ const BalancesTable = ({ balances }: BalanceProps) => {
 };
 
 export default BalancesTable;
+
