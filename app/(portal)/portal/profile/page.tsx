@@ -31,6 +31,8 @@ async function fetchUserDetails(email: string) {
     departmentId: user.department?.id || null, // Check for null
     titleId: user.title?.id || null, // Check for null
     manager: user.manager || null,
+    onLeave: false, // Example: Replace with actual logic to determine if user is on leave
+    createdAt: user.createdAt, // Assuming user.createdAt is of type Date
   };
 }
 
