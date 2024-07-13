@@ -2,6 +2,7 @@ import calculateAndUpdateBalances from '@/lib/calculateBalances';
 import { getCurrentUser } from '@/lib/sessions/session';
 import { LeaveStatus } from '@prisma/client';
 import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 
 type EditBody = {
   notes: string;
@@ -18,7 +19,7 @@ type EditBody = {
 export async function PATCH(req: Request) {
   const loggedInUser = await getCurrentUser();
   if (loggedInUser?.role !== 'ADMIN' && loggedInUser?.role !== 'MODERATOR') {
-    throw new Error('You are not permitted to perfom this action');
+    throw new Error('You are not permitted to perform this action');
   }
 
   try {
