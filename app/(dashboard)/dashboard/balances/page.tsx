@@ -4,6 +4,7 @@ import { getAllBalances } from "@/lib/data/getBalanceData";
 import { Balances } from "@prisma/client";
 
 
+
 export default async function AdminBalances  ()  {
   const allBalances = await getAllBalances();
   if (allBalances === null) {

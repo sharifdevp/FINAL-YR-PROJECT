@@ -14,6 +14,7 @@ import { Balances } from '@prisma/client';
 import EditBalances from './EditBalances';
 import { Badge } from '@/components/ui/badge';
 
+
 type BalanceRowType = {
   title: string;
   values: string[];

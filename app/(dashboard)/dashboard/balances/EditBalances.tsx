@@ -10,6 +10,7 @@ import { Balances } from '@prisma/client';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 
+
 type State = {
   [key: string]: number;
 };
