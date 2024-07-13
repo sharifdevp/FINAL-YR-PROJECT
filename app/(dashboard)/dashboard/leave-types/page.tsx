@@ -10,7 +10,7 @@ interface LeaveType {
 }
 
 const fetchLeaveTypes = async (): Promise<LeaveType[]> => {
-  const res = await fetch('http://localhost:3000/api/leave-type', {
+  const res = await fetch('/api/leave-type', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

@@ -13,15 +13,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -42,50 +41,37 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-enum Role {
-  USER
-  ADMIN
-  MODERATOR
-}
-
 model User {
-  id              String       @id @default(cuid())
-  name            String?
-  email           String?      @unique
-  emailVerified   DateTime?
-  image           String?
-  role            Role         @default(USER)
-  phone           String?
-  title           OrgnTitle?   @relation(fields: [titleId], references: [id], onDelete: Cascade)
-  titleId         String?
-  titleName       String?
-  manager         String?
-  departmentName  String?
-  departmentId    String?
-  department      Department?  @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-  accounts        Account[]
-  sessions        Session[]
-  balances        Balances[]
-  leaves          Leave[]
-  onLeave         Boolean      @default(false)
-  birthName       String?
-  createdAt       DateTime     @default(now())
+  id             String      @id @default(cuid())
+  name           String?
+  email          String?     @unique
+  emailVerified  DateTime?
+  image          String?
+  role           Role        @default(USER)
+  phone          String?
+  titleId        String?
+  titleName      String?
+  manager        String?
+  departmentName String?
+  departmentId   String?
+  onLeave        Boolean     @default(false)
+  birthName      String?
+  createdAt      DateTime    @default(now())
+  accounts       Account[]
+  balances       Balances[]
+  leaves         Leave[]
+  sessions       Session[]
+  department     Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  title          OrgnTitle?  @relation(fields: [titleId], references: [id], onDelete: Cascade)
 }
 
 model LeaveType {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   title       String
-  values      String   @default("[\"Credit\", \"Used\", \"Available\"]")
-  category    String   // Should be a lower case of the title
+  values      String  @default("[\"Credit\", \"Used\", \"Available\"]")
+  category    String
   description String?
-  leaves      Leave[]  @relation("LeaveTypeToLeave")
-}
-
-enum LeaveStatus {
-  PENDING
-  APPROVED
-  INMODERATION
-  REJECTED
+  leaves      Leave[] @relation("LeaveTypeToLeave")
 }
 
 model Leave {
@@ -95,7 +81,7 @@ model Leave {
   startDate     DateTime
   endDate       DateTime
   days          Int
-  userName      String 
+  userName      String
   phoneNumber   String?
   userNote      String?
   tasksLink     String?
@@ -110,42 +96,42 @@ model Leave {
   leaveTypeId   String?
   requestedOn   DateTime    @default(now())
   approvedBy    String?
-  department   String?
+  department    String?
+  leaveType     LeaveType?  @relation("LeaveTypeToLeave", fields: [leaveTypeId], references: [id])
   user          User        @relation(fields: [userId], references: [id])
-  leaveType     LeaveType?  @relation(fields: [leaveTypeId], references: [id], name: "LeaveTypeToLeave")
 }
 
 model Balances {
-  id                 String @id @default(cuid())
-  year               String
-  annualCredit       Int?   @default(0)
-  annualUsed         Int?   @default(0)
-  annualAvailable    Int?   @default(0)
-  sickCredit         Int?   @default(0)
-  sickUsed           Int?   @default(0)
-  sickAvailable      Int?   @default(0)
-  maternityCredit    Int?   @default(0)
-  maternityUsed      Int?   @default(0)
-  maternityAvailable Int?   @default(0)
-  paternityCredit    Int?   @default(0)
-  paternityUsed      Int?   @default(0)
-  paternityAvailable Int?   @default(0)
-  emergencyCredit    Int?   @default(0)
-  emergencyUsed      Int?   @default(0)
-  emergencyAvailable Int?   @default(0)
-  compensationCredit Int?   @default(0)
-  compensationUsed   Int?   @default(0)
-  compensationAvailable Int? @default(0)
+  id                    String @id @default(cuid())
+  year                  String
+  annualCredit          Int?   @default(0)
+  annualUsed            Int?   @default(0)
+  annualAvailable       Int?   @default(0)
+  sickCredit            Int?   @default(0)
+  sickUsed              Int?   @default(0)
+  sickAvailable         Int?   @default(0)
+  maternityCredit       Int?   @default(0)
+  maternityUsed         Int?   @default(0)
+  maternityAvailable    Int?   @default(0)
+  paternityCredit       Int?   @default(0)
+  paternityUsed         Int?   @default(0)
+  paternityAvailable    Int?   @default(0)
+  emergencyCredit       Int?   @default(0)
+  emergencyUsed         Int?   @default(0)
+  emergencyAvailable    Int?   @default(0)
+  compensationCredit    Int?   @default(0)
+  compensationUsed      Int?   @default(0)
+  compensationAvailable Int?   @default(0)
   unpaidCredit          Int?   @default(0)
   unpaidUsed            Int?   @default(0)
   unpaidAvailable       Int?   @default(0)
-  name               String
-  email              String
-  user               User   @relation(fields: [email], references: [email], onDelete: Cascade)
+  name                  String
+  email                 String
+  user                  User   @relation(fields: [email], references: [email], onDelete: Cascade)
 }
 
 model Events {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String?
   startDate   DateTime
@@ -154,21 +140,28 @@ model Events {
 }
 
 model Department {
-  id          String   @id @default(cuid())
-  label       String
-  desc        String
-  userId      User[]
+  id     String @id @default(cuid())
+  label  String
+  desc   String
+  userId User[]
 }
 
 model OrgnTitle {
-  id          String    @id @default(cuid())
+  id          String @id @default(cuid())
   titlename   String
   description String
   user        User[]
 }
 
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
 
-
-
-
-
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  INMODERATION
+  REJECTED
+}
