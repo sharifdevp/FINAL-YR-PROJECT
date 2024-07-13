@@ -95,6 +95,24 @@ const EditLeave = ({
       });
 
       if (res.ok) {
+        // Send approval email
+        const emailResponse = await fetch('/api/send-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: email,
+            subject: 'Leave Approval Notice',
+            status: values.status,
+            userEmail: user,
+            notes: values.notes,
+          }),
+        });
+
+        if (!emailResponse.ok) {
+          throw new Error('Failed to send email');
+        }
         // Log the phoneNumber and message
         console.log('PhoneNumber:', phoneNumber);
         console.log('SMS Payload:', {
@@ -116,25 +134,6 @@ const EditLeave = ({
 
         if (!smsResponse.ok) {
           throw new Error('Failed to send SMS');
-        }
-
-        // Send approval email
-        const emailResponse = await fetch('/api/send-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            to: email,
-            subject: 'Leave Approval Notice',
-            status: values.status,
-            userEmail: user,
-            notes: values.notes,
-          }),
-        });
-
-        if (!emailResponse.ok) {
-          throw new Error('Failed to send email');
         }
 
         toast.success('Approval Action Completed Successfully', {
