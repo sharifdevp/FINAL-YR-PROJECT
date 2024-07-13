@@ -7,8 +7,6 @@ type SubmittedDepartment = {
   desc: string;
 };
 
-
-
 export async function POST(req: NextRequest) {
   const loggedInUser = await getCurrentUser();
   if (loggedInUser?.role !== 'ADMIN') {
@@ -18,7 +16,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  
   try {
     const body: SubmittedDepartment = await req.json();
     const { label, desc } = body;

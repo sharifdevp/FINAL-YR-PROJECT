@@ -56,7 +56,9 @@ const UserBalances = ({ balances }: Props) => {
         <LeaveCard
           year={balances?.year}
           leaveType={'UNPAID'}
+          credit={balances?.unpaidCredit as number}
           used={balances?.unpaidUsed as number}
+          balance={balances?.unpaidAvailable as number}
         />
       </section>
     </Container>
