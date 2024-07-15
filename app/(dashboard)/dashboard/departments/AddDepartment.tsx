@@ -81,7 +81,7 @@ const AddDepartment = () => {
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder='name' {...field} />
+                  <Input placeholder='Name' {...field} />
                 </FormControl>
                 <FormDescription>Add a name for the department</FormDescription>
                 <FormMessage />
